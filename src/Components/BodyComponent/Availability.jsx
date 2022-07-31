@@ -36,6 +36,14 @@ import { isAuth, getCookie } from "../../Common/helpers";
 import { useTheme } from "@mui/material/styles";
 import NavBreadCrumb from "./NavBreadCrumb";
 import VerifiedIcon from "@mui/icons-material/Verified";
+import RunningWithErrorsIcon from "@mui/icons-material/RunningWithErrors";
+
+var currentDate = new Date();
+let minutes = currentDate.getMinutes();
+let hours = currentDate.getHours();
+minutes = minutes <= 9 ? "0" + minutes : minutes;
+hours = hours <= 9 ? "0" + hours : hours;
+var currentTime = hours + ":" + minutes;
 
 const not = (a, b) => {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -221,7 +229,6 @@ export default function Availability() {
     getAvailabilityByDate();
     getPendingRequestsByDate();
     getConfirmedAppointmentsByDate();
-    // console.log("second", leftSlotsAvailable);
   }, [appointmentDate]);
 
   // Function to update availability
@@ -267,6 +274,7 @@ export default function Availability() {
     }
   };
 
+  // function to convert 24 hour time to 12 hour time with AM/PM
   function tConv24(time24) {
     var ts = time24;
     var H = +ts.substr(0, 2);
@@ -276,6 +284,15 @@ export default function Availability() {
     ts = h + ts.substr(2, 3) + ampm;
     return ts;
   }
+
+  //function to check and disable if the time slot is valid to update for a selected appointment date
+  const validTimeSlot = (value) => {
+    if (convertToDate(appointmentDate) <= convertToDate(new Date())) {
+      if (value >= currentTime) {
+        return false;
+      } else return true;
+    }
+  };
 
   const customList = (items) => (
     <Paper
@@ -287,7 +304,7 @@ export default function Availability() {
         paddingRight: 1,
       }}
     >
-      <List dense component="div" role="list">
+      <List dense component="div" role="list" sx={{ padding: 0 }}>
         {items.length > 0 ? (
           items.map((value) => {
             const labelId = `transfer-list-item-${value}-label`;
@@ -296,8 +313,17 @@ export default function Availability() {
                 key={value}
                 role="listitem"
                 button
-                onClick={handleToggle(value)}
-                sx={{ border: "1px solid #000", marginTop: 1, borderRadius: 1 }}
+                onClick={
+                  !validTimeSlot(value) ? handleToggle(value) : undefined
+                }
+                sx={{
+                  border: "1px solid #000",
+                  marginTop: 1,
+                  borderRadius: 1,
+                }}
+                style={{
+                  backgroundColor: validTimeSlot(value) && "#eeeeee",
+                }}
               >
                 <ListItemIcon>
                   <Checkbox
@@ -307,12 +333,18 @@ export default function Availability() {
                     inputProps={{
                       "aria-labelledby": labelId,
                     }}
+                    disabled={validTimeSlot(value)}
                   />
                 </ListItemIcon>
                 <ListItemText
                   id={labelId}
                   primary={`${value} [${tConv24(value)}]`}
                 />
+                {validTimeSlot(value) && (
+                  <Tooltip title={`Time slot: ${value} is invalid`}>
+                    <RunningWithErrorsIcon color="error"></RunningWithErrorsIcon>
+                  </Tooltip>
+                )}
                 {bookedSlots.length > 0 && bookedSlots.includes(value) && (
                   <Tooltip
                     title={`An appointment is already confirmed at ${value}`}
@@ -378,9 +410,7 @@ export default function Availability() {
           <Grid item>
             <Grid container direction="column" alignItems="center">
               <Grid>
-                <Typography sx={{ fontWeight: "bold", my: 1 }}>
-                  AVAILABLE SLOTS
-                </Typography>
+                <Typography variant="overline">AVAILABLE SLOTS</Typography>
               </Grid>
               <Grid item>{customList(left)}</Grid>
             </Grid>
@@ -432,9 +462,7 @@ export default function Availability() {
           <Grid item>
             <Grid container direction="column" alignItems="center">
               <Grid>
-                <Typography sx={{ fontWeight: "bold", my: 1 }}>
-                  CURRENT AVAILABILITY
-                </Typography>
+                <Typography variant="overline">CURRENT AVAILABILITY</Typography>
               </Grid>
               <Grid item>{customList(right)}</Grid>{" "}
             </Grid>
