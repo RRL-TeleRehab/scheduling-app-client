@@ -288,7 +288,7 @@ export default function Availability() {
   //function to check and disable if the time slot is valid to update for a selected appointment date
   const validTimeSlot = (value) => {
     if (convertToDate(appointmentDate) <= convertToDate(new Date())) {
-      if (value >= currentTime) {
+      if (currentTime <= value) {
         return false;
       } else return true;
     }

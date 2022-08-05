@@ -4,8 +4,6 @@ import { getCookie } from "../../../Common/helpers";
 import NavBreadCrumb from "../NavBreadCrumb";
 import AppointmentInfoById from "../AppointmentInfoById";
 import { CircularProgress } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
 
 const RequestedSpokeAppointmentById = ({ match, history }) => {
   const [values, setValues] = useState({

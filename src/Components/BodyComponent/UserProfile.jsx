@@ -158,6 +158,7 @@ const UserProfile = ({ history }) => {
 
   return (
     <Fragment>
+      <ToastContainer></ToastContainer>
       <NavBreadCrumb path="/profile" name="/Profile"></NavBreadCrumb>
       {loading ? (
         <CircularProgress></CircularProgress>
@@ -171,7 +172,8 @@ const UserProfile = ({ history }) => {
                 {title}
               </div>
               <img
-                src={`${isAuth().profilePhoto}`}
+                alt={process.env.REACT_APP_DEFAULT_USER_PROFILE_AVATAR}
+                src={profilePhoto}
                 style={{ width: "100px", height: "100px" }}
               ></img>
               <div>Experience: {yearsOfExperience}</div>

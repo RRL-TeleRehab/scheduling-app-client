@@ -3,6 +3,8 @@ import axios from "axios";
 import { getCookie, convertToDate } from "../../../Common/helpers";
 import NavBreadCrumb from "../NavBreadCrumb";
 import AppointmentInfoById from "../AppointmentInfoById";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
 import {
   CircularProgress,
   Button,
@@ -23,7 +25,6 @@ import {
   Radio,
   Typography,
   Grid,
-  Divider,
 } from "@mui/material";
 import isWeekend from "date-fns/isWeekend";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -41,8 +42,8 @@ const ConfirmedSpokeAppointmentInfoById = ({ match, history }) => {
     selectedTimeSlot: "",
   });
   const [modifyDialogOpen, setModifyDialogOpen] = useState(false);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [newAppointmentDate, setNewAppointmentDate] = useState(new Date());
-
   const { appointmentByIdInfo, loading, availableTimeSlots, selectedTimeSlot } =
     values;
   const token = getCookie("token");
@@ -53,8 +54,16 @@ const ConfirmedSpokeAppointmentInfoById = ({ match, history }) => {
     setModifyDialogOpen(true);
   };
 
+  const handleCancelOpen = () => {
+    setCancelDialogOpen(true);
+  };
+
   const handleModifyClose = () => {
     setModifyDialogOpen(false);
+  };
+
+  const handleCancelClose = () => {
+    setCancelDialogOpen(false);
   };
 
   const handleChange = (name) => (event) => {
@@ -87,7 +96,74 @@ const ConfirmedSpokeAppointmentInfoById = ({ match, history }) => {
       });
   };
 
-  const handleModifyAppointment = () => {};
+  const handleModifyAppointment = (event) => {
+    event.preventDefault();
+    const appointmentDate = convertToDate(appointmentByIdInfo.appointmentDate);
+    const appointmentTime = appointmentByIdInfo.appointmentTime;
+    const requestedTo = appointmentByIdInfo.requestedTo._id;
+    const requestedBy = appointmentByIdInfo.requestedBy._id;
+    const requestedFor = appointmentByIdInfo.requestedFor._id;
+    const newAppointmentRequestDate = convertToDate(newAppointmentDate);
+    if (selectedTimeSlot === "") {
+      toast.error("Select a time slot");
+    } else {
+      handleModifyClose();
+      axios({
+        method: "PUT",
+        url: `${process.env.REACT_APP_API}/confirmed-appointments/${appointmentId}`,
+        headers: { Authorization: `Bearer ${token}` },
+        data: {
+          newAppointmentRequestDate,
+          appointmentDate,
+          appointmentTime,
+          status: "modified",
+          selectedTimeSlot,
+          requestedTo,
+          requestedBy,
+          requestedFor,
+        },
+      })
+        .then((response) => {
+          console.log(response.data);
+          toast.success(response.data.message);
+          history.push(`/spoke/request/appointment`);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
+
+  const handleCancelAppointment = (event) => {
+    event.preventDefault();
+    const appointmentDate = convertToDate(appointmentByIdInfo.appointmentDate);
+    const appointmentTime = appointmentByIdInfo.appointmentTime;
+    const requestedTo = appointmentByIdInfo.requestedTo._id;
+    const requestedBy = appointmentByIdInfo.requestedBy._id;
+    const requestedFor = appointmentByIdInfo.requestedFor._id;
+    handleCancelClose();
+    axios({
+      method: "PUT",
+      url: `${process.env.REACT_APP_API}/confirmed-appointments/${appointmentId}`,
+      headers: { Authorization: `Bearer ${token}` },
+      data: {
+        appointmentDate,
+        appointmentTime,
+        requestedTo,
+        requestedBy,
+        requestedFor,
+        status: "cancelled",
+      },
+    })
+      .then((response) => {
+        console.log(response.data);
+        toast.success(response.data.message);
+        history.push(`/spoke/confirmedBookings`);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   function tConv24(time24) {
     var ts = time24;
@@ -107,7 +183,6 @@ const ConfirmedSpokeAppointmentInfoById = ({ match, history }) => {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
-        console.log(response.data);
         setValues({
           ...values,
           appointmentByIdInfo: response.data,
@@ -129,6 +204,7 @@ const ConfirmedSpokeAppointmentInfoById = ({ match, history }) => {
 
   return (
     <Fragment>
+      <ToastContainer></ToastContainer>
       <NavBreadCrumb
         path={`/spoke/confirmedBookings/${appointmentId}`}
         name={`Appointment Id: ${appointmentId}`}
@@ -164,7 +240,6 @@ const ConfirmedSpokeAppointmentInfoById = ({ match, history }) => {
                   color="success"
                   variant="contained"
                   disabled={appointmentByIdInfo.status !== "active"}
-                  // onClick={handleModifyClickOpen}
                   onClick={handleModifyOpen}
                 >
                   Modify<EditIcon></EditIcon>
@@ -186,13 +261,34 @@ const ConfirmedSpokeAppointmentInfoById = ({ match, history }) => {
                   color="error"
                   variant="contained"
                   disabled={appointmentByIdInfo.status !== "active"}
-                  // onClick={handleCancelClickOpen}
+                  onClick={handleCancelOpen}
                 >
                   Cancel<CancelIcon></CancelIcon>
                 </Button>
               </span>
             </Tooltip>
           </Stack>
+          <Dialog
+            open={cancelDialogOpen}
+            onClose={handleCancelClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              Cancel Appointment
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure want to cancel the appointment?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCancelClose}>Cancel</Button>
+              <Button onClick={handleCancelAppointment} autoFocus>
+                Submit
+              </Button>
+            </DialogActions>
+          </Dialog>
           <Dialog
             open={modifyDialogOpen}
             onClose={handleModifyClose}

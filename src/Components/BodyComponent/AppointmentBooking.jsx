@@ -531,54 +531,48 @@ const AppointmentBooking = ({ match, history }) => {
                           >
                             specialization
                           </Typography>
-                          <Typography>
-                            {clinicianSpecialization.length > 0 ? (
-                              clinicianSpecialization.map(
-                                (specialization, key) => (
-                                  <Chip
-                                    sx={{ m: 0.25 }}
-                                    key={specialization}
-                                    label={specialization}
-                                  ></Chip>
-                                )
+                          {clinicianSpecialization.length > 0 ? (
+                            clinicianSpecialization.map(
+                              (specialization, key) => (
+                                <Chip
+                                  sx={{ m: 0.25 }}
+                                  key={specialization}
+                                  label={specialization}
+                                ></Chip>
                               )
-                            ) : (
-                              <Typography
-                                variant="caption"
-                                display="block"
-                                gutterBottom
-                              >
-                                No specialization mentioned by clinician.
-                              </Typography>
-                            )}
-                          </Typography>
+                            )
+                          ) : (
+                            <Typography
+                              variant="caption"
+                              display="block"
+                              gutterBottom
+                            >
+                              No specialization mentioned by clinician.
+                            </Typography>
+                          )}
                           <Typography
                             variant="overline"
                             sx={{ fontWeight: 600 }}
                           >
                             Professional Courses
                           </Typography>
-                          <Typography>
-                            {clinicianProfessionalCourses.length > 0 ? (
-                              clinicianProfessionalCourses.map(
-                                (course, key) => (
-                                  <Chip
-                                    sx={{ m: 0.25 }}
-                                    key={course}
-                                    label={course}
-                                  ></Chip>
-                                )
-                              )
-                            ) : (
-                              <Typography
-                                variant="caption"
-                                display="block"
-                                gutterBottom
-                              >
-                                No courses mentioned by clinician.
-                              </Typography>
-                            )}
-                          </Typography>
+                          {clinicianProfessionalCourses.length > 0 ? (
+                            clinicianProfessionalCourses.map((course, key) => (
+                              <Chip
+                                sx={{ m: 0.25 }}
+                                key={course}
+                                label={course}
+                              ></Chip>
+                            ))
+                          ) : (
+                            <Typography
+                              variant="caption"
+                              display="block"
+                              gutterBottom
+                            >
+                              No courses mentioned by clinician.
+                            </Typography>
+                          )}
                         </Box>
                       </Stack>
                     </Grid>

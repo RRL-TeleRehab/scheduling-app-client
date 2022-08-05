@@ -1,20 +1,10 @@
 import React from "react";
-import {
-  AppBar,
-  Box,
-  Hidden,
-  IconButton,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import { useStyles } from "./HeaderStyle";
+import { AppBar, Box, Hidden, IconButton, Toolbar } from "@mui/material";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { Link } from "react-router-dom";
 import Profile from "./ActionTab/Profile";
 
 const NavbarComponent = ({ handleDrawerToggle, history }) => {
-  const classes = useStyles();
-
   return (
     <AppBar>
       <Toolbar
