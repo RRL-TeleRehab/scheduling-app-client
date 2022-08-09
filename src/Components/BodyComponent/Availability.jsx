@@ -24,6 +24,7 @@ import {
   useMediaQuery,
   Stack,
   Typography,
+  CssBaseline,
 } from "@mui/material";
 import UpgradeIcon from "@mui/icons-material/Upgrade";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -299,8 +300,8 @@ export default function Availability() {
         width: 300,
         height: 500,
         overflow: "auto",
-        paddingLeft: 1,
-        paddingRight: 1,
+        px: 1,
+        border: "1px solid gray",
       }}
     >
       <List dense component="div" role="list" sx={{ padding: 0 }}>
@@ -340,7 +341,7 @@ export default function Availability() {
                   primary={`${value} [${tConv24(value)}]`}
                 />
                 {validTimeSlot(value) && (
-                  <Tooltip title={`Time slot: ${value} is invalid`}>
+                  <Tooltip title={`Time slot: ${value} is expired`}>
                     <RunningWithErrorsIcon color="error"></RunningWithErrorsIcon>
                   </Tooltip>
                 )}
@@ -382,7 +383,8 @@ export default function Availability() {
     <Fragment>
       <NavBreadCrumb path="/availability" name="/Availability"></NavBreadCrumb>
       <ToastContainer></ToastContainer>
-      <Grid container spacing={5} justifyContent="center" alignItems="center">
+      <CssBaseline />
+      <Grid container justifyContent="center" alignItems="center">
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <StaticDatePicker
             displayStaticWrapperAs="desktop"
@@ -394,113 +396,118 @@ export default function Availability() {
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={2}
+        <Box
           sx={{
-            m: 3,
+            backgroundColor: "#fff",
+            m: 2,
             p: 2,
-            border: "2px solid #1976d2",
-            borderRadius: 2,
           }}
         >
-          <Grid item>
-            <Grid container direction="column" alignItems="center">
-              <Grid>
-                <Typography variant="overline">AVAILABLE SLOTS</Typography>
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Grid item>
+              <Grid container direction="column" alignItems="center">
+                <Grid>
+                  <Typography variant="overline">Available slots</Typography>
+                </Grid>
+                <Grid item>{customList(left)}</Grid>
               </Grid>
-              <Grid item>{customList(left)}</Grid>
             </Grid>
-          </Grid>
-          <Grid item>
-            <Grid container direction="column" alignItems="center">
-              <Button
-                sx={{ my: 1 }}
-                variant="contained"
-                size="small"
-                onClick={handleAllRight}
-                disabled={left.length === 0}
-                aria-label="move all right"
-              >
-                ≫
-              </Button>
-              <Button
-                sx={{ my: 1 }}
-                variant="contained"
-                size="small"
-                onClick={handleCheckedRight}
-                disabled={leftChecked.length === 0}
-                aria-label="move selected right"
-              >
-                &gt;
-              </Button>
-              <Button
-                sx={{ my: 1 }}
-                variant="contained"
-                size="small"
-                onClick={handleCheckedLeft}
-                disabled={rightChecked.length === 0}
-                aria-label="move selected left"
-              >
-                &lt;
-              </Button>
-              <Button
-                sx={{ my: 2 }}
-                variant="contained"
-                size="small"
-                onClick={handleAllLeft}
-                disabled={right.length === 0}
-                aria-label="move all left"
-              >
-                ≪
-              </Button>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <Grid container direction="column" alignItems="center">
-              <Grid>
-                <Typography variant="overline">CURRENT AVAILABILITY</Typography>
+            <Grid item>
+              <Grid container direction="column" alignItems="center">
+                <Button
+                  sx={{ my: 1 }}
+                  variant="contained"
+                  size="small"
+                  onClick={handleAllRight}
+                  disabled={left.length === 0}
+                  aria-label="move all right"
+                >
+                  ≫
+                </Button>
+                <Button
+                  sx={{ my: 1 }}
+                  variant="contained"
+                  size="small"
+                  onClick={handleCheckedRight}
+                  disabled={leftChecked.length === 0}
+                  aria-label="move selected right"
+                >
+                  &gt;
+                </Button>
+                <Button
+                  sx={{ my: 1 }}
+                  variant="contained"
+                  size="small"
+                  onClick={handleCheckedLeft}
+                  disabled={rightChecked.length === 0}
+                  aria-label="move selected left"
+                >
+                  &lt;
+                </Button>
+                <Button
+                  sx={{ my: 2 }}
+                  variant="contained"
+                  size="small"
+                  onClick={handleAllLeft}
+                  disabled={right.length === 0}
+                  aria-label="move all left"
+                >
+                  ≪
+                </Button>
               </Grid>
-              <Grid item>{customList(right)}</Grid>{" "}
             </Grid>
-          </Grid>
-        </Stack>
-      </Grid>
-      <Box component="span" display="flex" justifyContent="flex-end">
-        <Button variant="contained" color="primary" onClick={handleDialogOpen}>
-          Update
-          {loading ? (
-            <CircularProgress sx={{ ml: 2 }} color="secondary" size={20} />
-          ) : (
-            <UpgradeIcon></UpgradeIcon>
-          )}
-        </Button>
-        <Dialog
-          fullScreen={fullScreen}
-          open={dialogOpen}
-          onClose={handleDialogClose}
-          aria-labelledby="responsive-dialog-title"
-        >
-          <DialogTitle id="responsive-dialog-title">
-            {"Update Availability"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Are you sure want to update your availability for{" "}
-              {convertToDate(appointmentDate)} ?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button autoFocus onClick={handleDialogClose}>
-              Cancel
-            </Button>
-            <Button onClick={updateAvailability} autoFocus>
+            <Grid item>
+              <Grid container direction="column" alignItems="center">
+                <Grid>
+                  <Typography variant="overline">
+                    Current availability
+                  </Typography>
+                </Grid>
+                <Grid item>{customList(right)}</Grid>
+              </Grid>
+            </Grid>
+          </Stack>
+          <Stack sx={{ mt: 2 }} alignItems="flex-end">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleDialogOpen}
+            >
               Update
+              {loading ? (
+                <CircularProgress sx={{ ml: 2 }} color="warning" size={20} />
+              ) : (
+                <UpgradeIcon sx={{ ml: 2 }}></UpgradeIcon>
+              )}
             </Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
+          </Stack>
+        </Box>
+      </Grid>
+
+      <Dialog
+        fullScreen={fullScreen}
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle id="responsive-dialog-title">
+          Update Availability
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure want to update your availability for{" "}
+            {convertToDate(appointmentDate)} ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={handleDialogClose}>
+            Cancel
+          </Button>
+          <Button onClick={updateAvailability} autoFocus>
+            Update
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 }

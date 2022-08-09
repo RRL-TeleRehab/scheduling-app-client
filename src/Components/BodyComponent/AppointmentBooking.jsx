@@ -824,7 +824,7 @@ const AppointmentBooking = ({ match, history }) => {
                   {bookAppointmentLoad ? (
                     <CircularProgress
                       sx={{ ml: 2 }}
-                      color="secondary"
+                      color="warning"
                       size={20}
                     />
                   ) : null}
