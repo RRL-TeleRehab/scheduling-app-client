@@ -3,23 +3,29 @@ import NavBreadCrumb from "./NavBreadCrumb";
 import axios from "axios";
 import { getCookie } from "../../Common/helpers";
 import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import {
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Avatar,
+  Tooltip,
+  CircularProgress,
+  Badge,
+  Typography,
+  TableCell,
+  Pagination,
+  Stack,
+} from "@mui/material";
+import { tableCellClasses } from "@mui/material/TableCell";
 import { Link } from "react-router-dom";
-import Button from "@mui/material/Button";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip";
-import CircularProgress from "@mui/material/CircularProgress";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { Badge, Typography } from "@mui/material";
 
 const appointmentStatusValues = {
   active: {
@@ -67,21 +73,29 @@ const HubConfirmedBookings = () => {
   const [values, setValues] = useState({
     confirmedAppointments: [],
     loading: false,
+    numberOfPages: 0,
+    pageNumber: 1,
   });
-  const { confirmedAppointments, loading } = values;
+  const { confirmedAppointments, loading, numberOfPages, pageNumber } = values;
+
   const token = getCookie("token");
+
+  const handleChange = (event, newPage) => {
+    setValues({ ...values, pageNumber: newPage });
+  };
 
   const getConfirmedAppointments = () => {
     setValues({ ...values, loading: true });
     axios({
       method: "GET",
-      url: `${process.env.REACT_APP_API}/confirmed-appointments`,
+      url: `${process.env.REACT_APP_API}/confirmed-appointments?page=${pageNumber}`,
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
         setValues({
           ...values,
           confirmedAppointments: response.data.confirmedBookings,
+          numberOfPages: response.data.totalPages,
           loading: false,
         });
       })
@@ -102,7 +116,7 @@ const HubConfirmedBookings = () => {
 
   useEffect(() => {
     getConfirmedAppointments();
-  }, []);
+  }, [pageNumber]);
 
   return (
     <Fragment>
@@ -115,120 +129,134 @@ const HubConfirmedBookings = () => {
       ) : (
         <Fragment>
           {confirmedAppointments.length > 0 ? (
-            <TableContainer component={Paper}>
-              <Table sx={tableHeadStyle} aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell></StyledTableCell>
-                    <StyledTableCell>Requested By</StyledTableCell>
-                    <StyledTableCell>Requested For</StyledTableCell>
-                    <StyledTableCell>Appointment Date</StyledTableCell>
-                    <StyledTableCell>Appointment Time</StyledTableCell>
-                    <StyledTableCell colSpan={2}>
-                      Appointment Status
-                    </StyledTableCell>
-                    <StyledTableCell colSpan={2}>
-                      Appointment confirmation Id
-                    </StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {confirmedAppointments.map((row) => (
-                    <StyledTableRow style={{ textAlign: "left" }} key={row._id}>
-                      <StyledTableCell>
-                        <Badge
-                          overlap="circular"
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "right",
-                          }}
-                          badgeContent={
-                            <SmallAvatar
+            <Fragment>
+              <TableContainer component={Paper}>
+                <Table sx={tableHeadStyle} aria-label="customized table">
+                  <TableHead>
+                    <TableRow>
+                      <StyledTableCell></StyledTableCell>
+                      <StyledTableCell>Requested By</StyledTableCell>
+                      <StyledTableCell>Requested For</StyledTableCell>
+                      <StyledTableCell>Appointment Date</StyledTableCell>
+                      <StyledTableCell>Appointment Time</StyledTableCell>
+                      <StyledTableCell colSpan={2}>
+                        Appointment Status
+                      </StyledTableCell>
+                      <StyledTableCell colSpan={2}>
+                        Appointment confirmation Id
+                      </StyledTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {confirmedAppointments.map((row) => (
+                      <StyledTableRow
+                        style={{ textAlign: "left" }}
+                        key={row._id}
+                      >
+                        <StyledTableCell>
+                          <Badge
+                            overlap="circular"
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "right",
+                            }}
+                            badgeContent={
+                              <SmallAvatar
+                                alt="img"
+                                src={row.requestedTo.profilePhoto}
+                              />
+                            }
+                          >
+                            <Avatar
                               alt="img"
-                              src={row.requestedTo.profilePhoto}
+                              src={row.requestedBy.profilePhoto}
                             />
-                          }
-                        >
-                          <Avatar
-                            alt="img"
-                            src={row.requestedBy.profilePhoto}
-                          />
-                        </Badge>
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        {row.requestedBy.firstName} {row.requestedBy.lastName}
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        {row.requestedFor.firstName} {row.requestedFor.lastName}
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        {convertToDate(row.appointmentDate)}
-                      </StyledTableCell>
-                      <StyledTableCell>{row.appointmentTime}</StyledTableCell>
-                      <StyledTableCell>{row.status}</StyledTableCell>
-                      <StyledTableCell>
-                        {row.status === "active" && (
-                          <Tooltip
-                            title={appointmentStatusValues[
-                              row.status
-                            ].message.toUpperCase()}
-                          >
-                            <span>
-                              <Button>
-                                {appointmentStatusValues[row.status].icon}
-                              </Button>
-                            </span>
-                          </Tooltip>
-                        )}
-                        {row.status === "fulfilled" && (
-                          <Tooltip
-                            title={appointmentStatusValues[
-                              row.status
-                            ].message.toUpperCase()}
-                          >
-                            <span>
-                              <Button>
-                                {appointmentStatusValues[row.status].icon}
-                              </Button>
-                            </span>
-                          </Tooltip>
-                        )}
-                        {row.status === "cancelled" && (
-                          <Tooltip
-                            title={appointmentStatusValues[
-                              row.status
-                            ].message.toUpperCase()}
-                          >
-                            <span>
-                              <Button>
-                                {appointmentStatusValues[row.status].icon}
-                              </Button>
-                            </span>
-                          </Tooltip>
-                        )}
-                      </StyledTableCell>
-                      <StyledTableCell component="th" scope="row">
-                        {row._id}
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Tooltip title="more information">
-                          <Button
-                            size="small"
-                            component={Link}
-                            to={`/hub/confirmedBookings/${row._id}`}
-                          >
-                            <OpenInFullIcon
-                              color="primary"
+                          </Badge>
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {row.requestedBy.firstName} {row.requestedBy.lastName}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {row.requestedFor.firstName}{" "}
+                          {row.requestedFor.lastName}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {convertToDate(row.appointmentDate)}
+                        </StyledTableCell>
+                        <StyledTableCell>{row.appointmentTime}</StyledTableCell>
+                        <StyledTableCell>{row.status}</StyledTableCell>
+                        <StyledTableCell>
+                          {row.status === "active" && (
+                            <Tooltip
+                              title={appointmentStatusValues[
+                                row.status
+                              ].message.toUpperCase()}
+                            >
+                              <span>
+                                <Button>
+                                  {appointmentStatusValues[row.status].icon}
+                                </Button>
+                              </span>
+                            </Tooltip>
+                          )}
+                          {row.status === "fulfilled" && (
+                            <Tooltip
+                              title={appointmentStatusValues[
+                                row.status
+                              ].message.toUpperCase()}
+                            >
+                              <span>
+                                <Button>
+                                  {appointmentStatusValues[row.status].icon}
+                                </Button>
+                              </span>
+                            </Tooltip>
+                          )}
+                          {row.status === "cancelled" && (
+                            <Tooltip
+                              title={appointmentStatusValues[
+                                row.status
+                              ].message.toUpperCase()}
+                            >
+                              <span>
+                                <Button>
+                                  {appointmentStatusValues[row.status].icon}
+                                </Button>
+                              </span>
+                            </Tooltip>
+                          )}
+                        </StyledTableCell>
+                        <StyledTableCell component="th" scope="row">
+                          {row._id}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          <Tooltip title="more information">
+                            <Button
                               size="small"
-                            ></OpenInFullIcon>
-                          </Button>
-                        </Tooltip>
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                              component={Link}
+                              to={`/hub/confirmedBookings/${row._id}`}
+                            >
+                              <OpenInFullIcon
+                                color="primary"
+                                size="small"
+                              ></OpenInFullIcon>
+                            </Button>
+                          </Tooltip>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Stack sx={{ m: 2 }} alignItems="center">
+                <Pagination
+                  count={numberOfPages}
+                  defaultPage={pageNumber}
+                  color="primary"
+                  onChange={handleChange}
+                />
+              </Stack>
+            </Fragment>
           ) : (
             <Typography>No Appointments available</Typography>
           )}

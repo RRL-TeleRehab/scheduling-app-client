@@ -21,7 +21,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  useMediaQuery,
   Stack,
   Typography,
   CssBaseline,
@@ -33,7 +32,6 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import { isAuth, getCookie } from "../../Common/helpers";
-import { useTheme } from "@mui/material/styles";
 import NavBreadCrumb from "./NavBreadCrumb";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import RunningWithErrorsIcon from "@mui/icons-material/RunningWithErrors";
@@ -62,10 +60,7 @@ export default function Availability() {
   const [appointmentDate, setAppointmentDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [pendingRequestSlots, setPendingRequestSlots] = useState([]);
-
   const [dialogOpen, setDialogOpen] = useState(false);
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleDialogOpen = () => {
     setDialogOpen(true);
@@ -83,13 +78,11 @@ export default function Availability() {
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
-
     if (currentIndex === -1) {
       newChecked.push(value);
     } else {
       newChecked.splice(currentIndex, 1);
     }
-
     setChecked(newChecked);
   };
 
@@ -485,7 +478,6 @@ export default function Availability() {
       </Grid>
 
       <Dialog
-        fullScreen={fullScreen}
         open={dialogOpen}
         onClose={handleDialogClose}
         aria-labelledby="responsive-dialog-title"
