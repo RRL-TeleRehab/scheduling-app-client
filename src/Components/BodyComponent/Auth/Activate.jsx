@@ -3,14 +3,18 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import jwt from "jsonwebtoken";
-import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
-import Container from "@mui/material/Container";
-import CssBaseline from "@mui/material/CssBaseline";
-import Typography from "@mui/material/Typography";
-import { Box, Stack, Grid } from "@mui/material";
-import Logo from "../../../media/logo.svg";
+import {
+  Box,
+  Stack,
+  Typography,
+  CssBaseline,
+  Container,
+  CircularProgress,
+  Button,
+} from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
+import { Link } from "react-router-dom";
+
 // match is injected from BrowserRouter which is provide as a prop to the Activate component as it is wrapped in the BrowserRouter
 const Activate = ({ match }) => {
   const [values, setValues] = useState({
@@ -68,59 +72,44 @@ const Activate = ({ match }) => {
           marginTop: 10,
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          padding: 1.5,
-          border: "0.125rem solid",
+          padding: 5,
           boxShadow: 10,
           borderRadius: "1.5rem 0 1.5rem 1.5rem",
         }}
       >
-        <Stack direction="row" spacing={2} alignItems="center">
-          <img src={Logo} style={{ width: "2.5rem", height: "2.5rem" }} />
-          <Typography
-            component="h1"
-            variant="h1"
-            sx={{ fontWeight: "bold", fontSize: "1.5rem" }}
-          >
-            ACTIVATE ACCOUNT
+        <Typography variant="h4">Activate account</Typography>
+        <Typography variant="overline">
+          Thank you{" "}
+          <strong>
+            {firstName} {lastName}
+          </strong>{" "}
+          for signing up with <strong>promote</strong>.
+        </Typography>
+        <Typography variant="caption">
+          Your account is ready to use. To get started activate your account
+          now.
+        </Typography>
+        <Button
+          fullWidth
+          variant="contained"
+          sx={{ mt: 2, boxShadow: 10 }}
+          onClick={clickSubmit}
+        >
+          Activate
+          {loading ? (
+            <CircularProgress sx={{ ml: 2 }} color="warning" size={20} />
+          ) : (
+            <DoneIcon sx={{ ml: 2 }}></DoneIcon>
+          )}
+        </Button>
+        <Stack direction="row" justifyContent="end" sx={{ mt: 2 }}>
+          <Typography>
+            Back to {"  "}
+            <Link style={{ textDecoration: "none" }} to="/signin">
+              Login
+            </Link>
           </Typography>
         </Stack>
-        <Box sx={{ mt: 2 }}>
-          <Grid
-            container
-            spacing={2}
-            direction="column"
-            justifyContent="center"
-          >
-            <Grid item xs={12} sm={6}>
-              <Typography component="h6" variant="overline">
-                Thank you{" "}
-                <strong>
-                  {firstName} {lastName}
-                </strong>{" "}
-                for signing up with <strong>promote</strong>.
-              </Typography>
-              <Typography component="h6" variant="subtitle1">
-                Your account is ready to use. To get started activate your
-                account now.
-              </Typography>
-            </Grid>
-          </Grid>
-          <Stack direction="row" justifyContent="center">
-            <Button
-              variant="contained"
-              sx={{ mt: 2, boxShadow: 10 }}
-              onClick={clickSubmit}
-            >
-              Activate
-              {loading ? (
-                <CircularProgress sx={{ ml: 2 }} color="secondary" size={20} />
-              ) : (
-                <DoneIcon></DoneIcon>
-              )}
-            </Button>
-          </Stack>
-        </Box>
       </Box>
     </Container>
   );

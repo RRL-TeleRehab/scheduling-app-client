@@ -2,7 +2,6 @@ import React, { useState, Fragment } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Logo from "../../../media/logo.svg";
 import { Link } from "react-router-dom";
 import {
   Stack,
@@ -15,7 +14,7 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
+import EmailIcon from "@mui/icons-material/Email";
 
 const ForgotPassword = () => {
   const [values, setValues] = useState({
@@ -23,9 +22,7 @@ const ForgotPassword = () => {
     loading: false,
   });
   const [errors, setErrors] = useState({});
-
   const { email, loading } = values;
-
   const validate = () => {
     let temp = { ...errors };
     temp.email = email ? "" : "Email is required";
@@ -78,23 +75,15 @@ const ForgotPassword = () => {
           marginTop: 10,
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          padding: 1.5,
-          border: "0.125rem solid",
-          boxShadow: 12,
+          padding: 5,
+          boxShadow: 10,
           borderRadius: "1.5rem 0 1.5rem 1.5rem",
         }}
       >
-        <Stack direction="row" spacing={2} alignItems="center">
-          <img src={Logo} style={{ width: "2.5rem", height: "2.5rem" }} />
-          <Typography
-            component="h1"
-            variant="h1"
-            sx={{ fontWeight: "bold", fontSize: "1.5rem" }}
-          >
-            FORGOT PASSWORD
-          </Typography>
-        </Stack>
+        <Typography variant="h4">Forgot password?</Typography>
+        <Typography variant="caption">
+          No worries, We'll send you reset instructions.
+        </Typography>
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }}>
           <Grid
             container
@@ -102,7 +91,7 @@ const ForgotPassword = () => {
             direction="column"
             justifyContent="center"
           >
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 required
                 fullWidth
@@ -110,10 +99,9 @@ const ForgotPassword = () => {
                 id="email"
                 label="Email"
                 name="email"
-                placeholder="Enter email address"
+                placeholder="Enter your email"
                 autoComplete="email"
                 value={email}
-                sx={{ width: "40ch" }}
                 onChange={handleChange("email")}
                 {...(errors["email"] && {
                   error: true,
@@ -126,17 +114,18 @@ const ForgotPassword = () => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 2, boxShadow: 10 }}
+            sx={{ mt: 2, boxShadow: 10, textTransform: "none" }}
           >
-            Send
+            Reset password
             {loading ? (
-              <CircularProgress sx={{ ml: 2 }} color="secondary" size={20} />
+              <CircularProgress sx={{ ml: 2 }} color="warning" size={20} />
             ) : (
-              <SendIcon></SendIcon>
+              <EmailIcon sx={{ ml: 2 }}></EmailIcon>
             )}
           </Button>
           <Stack direction="row" justifyContent="end" sx={{ mt: 2 }}>
             <Typography>
+              Back to{"  "}
               <Link style={{ textDecoration: "none" }} to="/signin">
                 Login
               </Link>

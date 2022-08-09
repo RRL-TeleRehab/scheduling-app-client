@@ -3,8 +3,6 @@ import { Link, Redirect, withRouter } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Logo from "../../../media/logo.svg";
-
 import {
   Button,
   TextField,
@@ -20,12 +18,10 @@ import {
   CircularProgress,
   IconButton,
   InputAdornment,
-  Divider,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
-
 import { isAuth, authenticate } from "../../../Common/helpers";
 import GoogleAuth from "./GoogleAuth";
 
@@ -204,23 +200,12 @@ const SignUp = ({ history }) => {
           marginTop: 10,
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          padding: 3.5,
-          border: "0.125rem solid",
+          padding: 5,
           boxShadow: 10,
           borderRadius: "1.5rem 0 1.5rem 1.5rem",
         }}
       >
-        <Stack direction="row" spacing={2} alignItems="center">
-          <img src={Logo} style={{ width: "2.5rem", height: "2.5rem" }} />
-          <Typography
-            component="h1"
-            variant="h1"
-            sx={{ fontWeight: "bold", fontSize: "1.5rem" }}
-          >
-            Sign up
-          </Typography>
-        </Stack>
+        <Typography variant="h4">Create a new account</Typography>
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }}>
           <Stack
             direction="row"
@@ -229,6 +214,7 @@ const SignUp = ({ history }) => {
             xs={12}
             sx={{ border: "1px", mb: 2, ml: 3 }}
           >
+            <Typography variant="overline">Clinician role:</Typography>
             <RadioGroup row name="row-radio-buttons-group" value={role}>
               <FormControlLabel
                 checked={role === "spoke"}
@@ -260,11 +246,10 @@ const SignUp = ({ history }) => {
                 name="firstName"
                 id="firstName"
                 label="First Name"
-                placeholder="Enter first name"
+                placeholder="Enter your first name"
                 size="small"
                 value={firstName}
                 onChange={handleChange("firstName")}
-                sx={{ width: "40ch" }}
                 {...(errors["firstName"] && {
                   error: true,
                   helperText: errors["firstName"],
@@ -279,11 +264,10 @@ const SignUp = ({ history }) => {
                 label="Last Name"
                 name="lastName"
                 autoComplete="family-name"
-                placeholder="Enter last name"
+                placeholder="Enter your last name"
                 size="small"
                 value={lastName}
                 onChange={handleChange("lastName")}
-                sx={{ width: "40ch" }}
                 {...(errors["lastName"] && {
                   error: true,
                   helperText: errors["lastName"],
@@ -297,7 +281,7 @@ const SignUp = ({ history }) => {
                 id="email"
                 label="Email Address"
                 name="email"
-                placeholder="Enter email address"
+                placeholder="Enter your email"
                 autoComplete="email"
                 size="small"
                 value={email}
@@ -320,7 +304,6 @@ const SignUp = ({ history }) => {
                 size="small"
                 autoComplete="new-password"
                 value={password}
-                sx={{ width: "40ch" }}
                 onChange={handleChange("password")}
                 InputProps={{
                   endAdornment: (
@@ -358,7 +341,6 @@ const SignUp = ({ history }) => {
                 size="small"
                 value={confirmPassword}
                 onChange={handleChange("confirmPassword")}
-                sx={{ width: "40ch" }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -387,30 +369,27 @@ const SignUp = ({ history }) => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 2, boxShadow: 10 }}
+            sx={{ mt: 2, boxShadow: 10, textTransform: "none" }}
           >
-            Create Account
+            Sign up
             {loading ? (
-              <CircularProgress sx={{ ml: 2 }} color="secondary" size={20} />
+              <CircularProgress sx={{ ml: 2 }} color="warning" size={20} />
             ) : (
-              <HowToRegIcon></HowToRegIcon>
+              <HowToRegIcon sx={{ ml: 2 }}></HowToRegIcon>
             )}
           </Button>
+          <GoogleAuth
+            informParent={informParent}
+            path="google-register"
+          ></GoogleAuth>
           <Stack direction="row" justifyContent="end" sx={{ mt: 2 }}>
             <Typography>
+              {" "}
+              Already have an account?{"  "}
               <Link style={{ textDecoration: "none" }} to="/signin">
-                Already have an account?
+                Sign in
               </Link>
             </Typography>
-          </Stack>
-          <Divider sx={{ mt: 2 }}>
-            <Typography justifyContent="center">Sign up with</Typography>
-          </Divider>
-          <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
-            <GoogleAuth
-              informParent={informParent}
-              path="google-register"
-            ></GoogleAuth>
           </Stack>
         </Box>
       </Box>

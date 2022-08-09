@@ -3,10 +3,9 @@ import { Redirect, Link } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Logo from "../../../media/logo.svg";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import LoginIcon from "@mui/icons-material/Login";
+import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 
 import {
   Button,
@@ -19,7 +18,6 @@ import {
   CircularProgress,
   Stack,
   IconButton,
-  Divider,
   InputAdornment,
 } from "@mui/material";
 
@@ -133,23 +131,12 @@ const SignIn = ({ history }) => {
           marginTop: 10,
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          padding: 1.5,
-          border: "0.125rem solid",
+          padding: 5,
           boxShadow: 10,
           borderRadius: "1.5rem 0 1.5rem 1.5rem",
         }}
       >
-        <Stack direction="row" spacing={2} alignItems="center">
-          <img src={Logo} style={{ width: "2.5rem", height: "2.5rem" }} />
-          <Typography
-            component="h1"
-            variant="h1"
-            sx={{ fontWeight: "bold", fontSize: "1.5rem" }}
-          >
-            LOGIN
-          </Typography>
-        </Stack>
+        <Typography variant="h4">Welcome back</Typography>
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }}>
           <Grid
             container
@@ -164,12 +151,11 @@ const SignIn = ({ history }) => {
                 id="email"
                 label="Email"
                 name="email"
-                placeholder="Enter email address"
+                placeholder="Enter your email"
                 autoComplete="email"
                 size="small"
                 value={email}
                 onChange={handleChange("email")}
-                sx={{ width: "40ch" }}
                 {...(errors["email"] && {
                   error: true,
                   helperText: errors["email"],
@@ -184,12 +170,11 @@ const SignIn = ({ history }) => {
                 label="Password"
                 type={showPassword ? "text" : "password"}
                 id="password"
-                placeholder="Enter password"
+                placeholder="Enter your password"
                 autoComplete="new-password"
                 size="small"
                 value={password}
                 onChange={handleChange("password")}
-                sx={{ width: "40ch" }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -221,37 +206,33 @@ const SignIn = ({ history }) => {
                 to="/auth/password/forgot"
               >
                 Forgot Password?
-              </Link>{" "}
+              </Link>
             </Typography>
           </Stack>
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 2, boxShadow: 10 }}
+            sx={{ mt: 2, boxShadow: 10, textTransform: "none" }}
           >
-            Login
+            Sign in
             {loading ? (
-              <CircularProgress sx={{ ml: 2 }} color="secondary" size={20} />
+              <CircularProgress sx={{ ml: 2 }} color="warning" size={20} />
             ) : (
-              <LoginIcon></LoginIcon>
+              <ArrowCircleRightIcon sx={{ ml: 2 }}></ArrowCircleRightIcon>
             )}
           </Button>
-          <Stack direction="row" justifyContent="end" sx={{ mt: 2 }}>
+          <GoogleAuth
+            informParent={informParent}
+            path="google-login"
+          ></GoogleAuth>
+          <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
             <Typography>
+              Don't have an account? {"  "}
               <Link style={{ textDecoration: "none" }} to="/signup">
-                Don't have an account?
+                Sign up
               </Link>
             </Typography>
-          </Stack>
-          <Divider sx={{ mt: 2 }}>
-            <Typography justifyContent="center">Login with</Typography>
-          </Divider>
-          <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
-            <GoogleAuth
-              informParent={informParent}
-              path="google-login"
-            ></GoogleAuth>
           </Stack>
         </Box>
       </Box>

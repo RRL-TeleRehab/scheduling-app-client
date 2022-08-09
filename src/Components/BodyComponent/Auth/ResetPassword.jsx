@@ -1,22 +1,25 @@
 import React, { useState, Fragment, useEffect } from "react";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
+import {
+  Grid,
+  Box,
+  Typography,
+  Button,
+  Container,
+  CssBaseline,
+  TextField,
+  CircularProgress,
+  Stack,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import CircularProgress from "@mui/material/CircularProgress";
 import { Link } from "react-router-dom";
 import jwt from "jsonwebtoken";
-import { Stack, IconButton, InputAdornment } from "@mui/material";
-import Logo from "../../../media/logo.svg";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import KeyIcon from "@mui/icons-material/Key";
 
 const ResetPassword = ({ match }) => {
   const [values, setValues] = useState({
@@ -160,28 +163,21 @@ const ResetPassword = ({ match }) => {
           marginTop: 10,
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          padding: 1.5,
-          border: "0.125rem solid",
+          padding: 5,
           boxShadow: 10,
           borderRadius: "1.5rem 0 1.5rem 1.5rem",
         }}
       >
-        <Stack direction="row" spacing={2} alignItems="center">
-          <img src={Logo} style={{ width: "2.5rem", height: "2.5rem" }} />
-          <Typography
-            component="h1"
-            variant="h1"
-            sx={{ fontWeight: "bold", fontSize: "1.5rem" }}
-          >
-            RESET ACCOUNT PASSWORD
-          </Typography>
-        </Stack>
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Typography component="h6" variant="overline">
-            Welcome back {firstName} {lastName}
-          </Typography>
-        </Stack>
+        <Typography variant="h4">Set new password</Typography>
+        <Typography variant="caption">
+          Your new password must be different to previously used passwords.
+        </Typography>
+        <Typography variant="overline">
+          Welcome back{" "}
+          <strong>
+            {firstName} {lastName}
+          </strong>
+        </Typography>
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }}>
           <Grid
             container
@@ -201,7 +197,6 @@ const ResetPassword = ({ match }) => {
                 size="small"
                 autoComplete="new-password"
                 value={newPassword}
-                sx={{ width: "40ch" }}
                 onChange={handleChange("newPassword")}
                 InputProps={{
                   endAdornment: (
@@ -238,7 +233,6 @@ const ResetPassword = ({ match }) => {
                 placeholder="Confirm new password"
                 size="small"
                 value={confirmNewPassword}
-                sx={{ width: "40ch" }}
                 onChange={handleChange("confirmNewPassword")}
                 InputProps={{
                   endAdornment: (
@@ -270,15 +264,16 @@ const ResetPassword = ({ match }) => {
             variant="contained"
             sx={{ mt: 2, boxShadow: 10 }}
           >
-            Update
+            Reset password
             {loading ? (
-              <CircularProgress sx={{ ml: 2 }} color="secondary" size={20} />
+              <CircularProgress sx={{ ml: 2 }} color="warning" size={20} />
             ) : (
-              <RestartAltIcon></RestartAltIcon>
+              <KeyIcon sx={{ ml: 2 }}></KeyIcon>
             )}
           </Button>
           <Stack direction="row" justifyContent="end" sx={{ mt: 2 }}>
             <Typography>
+              Back to {"  "}
               <Link style={{ textDecoration: "none" }} to="/signin">
                 Login
               </Link>

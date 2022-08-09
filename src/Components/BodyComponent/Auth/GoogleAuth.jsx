@@ -7,10 +7,12 @@ import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import googleSvg from "../../../media/google.svg";
-
+import { useLocation } from "react-router-dom";
 import { Button } from "@mui/material";
+import GoogleIcon from "@mui/icons-material/Google";
 
 const GoogleAuth = ({ informParent, path }) => {
+  const location = useLocation();
   const responseGoogle = (response) => {
     // console.log(response.tokenId);
     axios({
@@ -25,7 +27,7 @@ const GoogleAuth = ({ informParent, path }) => {
       })
       .catch((error) => {
         toast.error(error.response.data.error);
-        console.log("GOOGLE AUTHENTICATION ERROR", error.response);
+        console.log("Google Authentication Error", error.response);
       });
   };
 
@@ -38,11 +40,15 @@ const GoogleAuth = ({ informParent, path }) => {
         onFailure={responseGoogle}
         render={(renderProps) => (
           <Button
+            fullWidth
+            variant="contained"
             onClick={renderProps.onClick}
             disabled={renderProps.disabled}
-            sx={{ boxShadow: 2 }}
+            sx={{ boxShadow: 10, textTransform: "none", mt: 2 }}
           >
-            <img height={30} width={30} src={googleSvg}></img>
+            <GoogleIcon fontSize="small" sx={{ mr: 2 }}></GoogleIcon>
+            {location.pathname === "/signin" && "Sign in with Google"}
+            {location.pathname === "/signup" && "Sign up with Google"}
           </Button>
         )}
         cookiePolicy={"single_host_origin"}

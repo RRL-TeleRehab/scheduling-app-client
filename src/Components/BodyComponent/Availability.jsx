@@ -1,7 +1,6 @@
 import React, { useEffect, useState, Fragment } from "react";
 import moment from "moment";
 import axios from "axios";
-import isWeekend from "date-fns/isWeekend";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -386,8 +385,7 @@ export default function Availability() {
       <Grid container spacing={5} justifyContent="center" alignItems="center">
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <StaticDatePicker
-            orientation="landscape"
-            // disablePast
+            displayStaticWrapperAs="desktop"
             openTo="day"
             value={appointmentDate}
             onChange={(newValue) => {
