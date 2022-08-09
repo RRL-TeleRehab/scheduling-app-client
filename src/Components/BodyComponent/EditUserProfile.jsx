@@ -28,6 +28,7 @@ import {
   Typography,
   InputAdornment,
   Link as UILink,
+  Grid,
 } from "@mui/material";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import storage from "../../firebase";
@@ -38,6 +39,12 @@ import countryList from "react-select-country-list";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import PersonIcon from "@mui/icons-material/Person";
+import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import KeyIcon from "@mui/icons-material/Key";
+import SchoolIcon from "@mui/icons-material/School";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -234,7 +241,7 @@ const UserEditProfile = ({ history }) => {
   }, []);
 
   const generateExperienceValues = () => {
-    for (let i = 0; i <= 20; i++) {
+    for (let i = 0; i <= 30; i++) {
       values.experienceDropDownValues.push(i);
     }
   };
@@ -600,7 +607,7 @@ const UserEditProfile = ({ history }) => {
               flexGrow: 1,
               bgcolor: "background.paper",
               display: "flex",
-              height: 600,
+              height: 500,
             }}
           >
             <ToastContainer />
@@ -610,202 +617,264 @@ const UserEditProfile = ({ history }) => {
               onChange={handleTabChange}
               sx={{ borderRight: 1, borderColor: "divider" }}
             >
-              <Tab label="Personal Information" {...a11yProps(0)} />
-              <Tab label="Change Password" {...a11yProps(1)} />
-              <Tab label="Clinic Information" {...a11yProps(2)} />
-              <Tab label="Clinician Skills" {...a11yProps(3)} />
-              <Tab label="Clinic Address" {...a11yProps(4)} />
-              <Tab label="Social Accounts" {...a11yProps(5)} />
+              <Tab
+                label="User Information"
+                icon={<PersonIcon />}
+                {...a11yProps(0)}
+              />
+              <Tab
+                icon={<KeyIcon />}
+                label="Change Password"
+                {...a11yProps(1)}
+              />
+              <Tab
+                icon={<LocalHospitalIcon></LocalHospitalIcon>}
+                label="Clinic Information"
+                {...a11yProps(2)}
+              />
+              <Tab
+                icon={<SchoolIcon></SchoolIcon>}
+                label="Clinician Skills"
+                {...a11yProps(3)}
+              />
+              <Tab
+                icon={<LocationOnIcon></LocationOnIcon>}
+                label="Clinic Address"
+                {...a11yProps(4)}
+              />
+              <Tab
+                icon={<ConnectWithoutContactIcon></ConnectWithoutContactIcon>}
+                label="Social Accounts"
+                {...a11yProps(5)}
+              />
             </Tabs>
             <TabPanel variant="scrollable" value={value} index={0}>
-              <Typography variant="overline">Basic Information</Typography>
-              <Typography>AccountID : {_id}</Typography>
-              <Typography>Role : {role}</Typography>
-              <Typography>Username : {username}</Typography>
-              <Typography> Account created on: {Date(createdAt)} </Typography>
-              <Typography> Last updated on: {Date(updatedAt)}</Typography>
-              <Box component="form" noValidate onSubmit={handleFirebaseUpdate}>
-                <Avatar
-                  alt={`${firstName} ${lastName}`}
-                  src={profilePhoto}
-                  sx={{ width: 100, height: 100 }}
-                ></Avatar>
-                <Button containerelement="label" size="small">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageAsFile}
-                    ref={inputFile}
-                  ></input>
-                </Button>
-                <IconButton
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  type="submit"
-                >
-                  {profilePhotoUploading ? (
-                    <CircularProgress color="inherit" size={20} />
-                  ) : (
-                    <FileUploadIcon></FileUploadIcon>
-                  )}
-                </IconButton>
-              </Box>
-              <Stack spacing={2} direction="row">
-                <FormControl sx={{ minWidth: 100 }} size="small">
-                  <InputLabel id="demo-title">Title</InputLabel>
-                  <Select
-                    required
-                    labelId="demo-title"
-                    id="demo-title"
-                    value={title}
-                    label="Title"
-                    name="title"
-                    onChange={handleChange("title")}
-                  >
-                    <MenuItem value="">None</MenuItem>
-                    <MenuItem value={"Dr"}>Dr</MenuItem>
-                    <MenuItem value={"Mr"}>Mr</MenuItem>
-                    <MenuItem value={"Mrs"}>Mrs</MenuItem>
-                    <MenuItem value={"Ms"}>Ms</MenuItem>
-                    <MenuItem value={"Miss"}>Miss</MenuItem>
-                    <MenuItem value={"Mx"}>Mx</MenuItem>
-                    <MenuItem value={"Rev"}>Rev</MenuItem>
-                    <MenuItem value={"Sir"}>Sir</MenuItem>
-                  </Select>
-                </FormControl>
-
-                <TextField
-                  required
-                  autoComplete="given-name"
-                  name="firstName"
-                  id="firstName"
-                  label="First Name"
-                  placeholder="Enter first name"
-                  size="small"
-                  value={firstName}
-                  onChange={handleChange("firstName")}
-                  {...(errors["firstName"] && {
-                    error: true,
-                    helperText: errors["firstName"],
-                  })}
-                />
-                <TextField
-                  required
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                  placeholder="Enter last name"
-                  size="small"
-                  value={lastName}
-                  onChange={handleChange("lastName")}
-                  {...(errors["lastName"] && {
-                    error: true,
-                    helperText: errors["lastName"],
-                  })}
-                />
-                <FormControl sx={{ minWidth: 80 }} size="small">
-                  <InputLabel id="demo-experience">Experience</InputLabel>
-                  <Select
-                    labelId="demo-experience"
-                    id="demo-experience"
-                    value={yearsOfExperience}
-                    label="Experience"
-                    name="yearsOfExperience"
-                    onChange={handleChange("yearsOfExperience")}
-                  >
-                    {experienceDropDownValues.map((experience, index) => (
-                      <MenuItem key={index} value={experience}>
-                        {experience}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <TextField
-                  disabled
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  size="small"
-                  value={email}
-                />
-              </Stack>
-              <Stack direction="row" spacing={2}>
-                <TextField
-                  id="aboutClinician"
-                  label="About yourself"
-                  name="aboutClinician"
-                  placeholder="Add something about yourself..."
-                  size="small"
-                  multiline
-                  rows={5}
-                  value={aboutClinician}
-                  sx={{ width: 500 }}
-                  onChange={handleChange("aboutClinician")}
-                  helperText={`${aboutClinician.length}/${ABOUT_CLINICIAN_CHAR_LIMIT}`}
-                  {...(errors["aboutClinician"] && {
-                    error: true,
-                    helperText: errors["aboutClinician"],
-                  })}
-                />
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    label="Date of Birth"
-                    value={dateOfBirth}
-                    onChange={(newValue) => {
-                      setValues({
-                        ...values,
-                        dateOfBirth: newValue,
-                      });
+              <Grid
+                container
+                direction="row"
+                alignItems="center"
+                justify="center"
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Grid item xs={8}>
+                  <Box
+                    sx={{
+                      flexDirection: "column",
                     }}
-                    renderInput={(params) => <TextField {...params} />}
-                  />
-                </LocalizationProvider>
-                <FormControl sx={{ minWidth: 80 }} size="small">
-                  <InputLabel id="demo-gender">Gender</InputLabel>
-                  <Select
-                    labelId="demo-gender"
-                    id="demo-gender"
-                    value={gender}
-                    label="Gender"
-                    name="gender"
-                    onChange={handleChange("gender")}
                   >
-                    <MenuItem value={"male"}>Male</MenuItem>
-                    <MenuItem value={"female"}>Female</MenuItem>
-                  </Select>
-                </FormControl>
-                <TextField
-                  id="clinicianTrainedLocation"
-                  label="Clinician Trained Location"
-                  name="clinicianTrainedLocation"
-                  size="small"
-                  placeholder="Enter clinic trained location"
-                  value={clinicianTrainedLocation}
-                  sx={{ width: 300 }}
-                  onChange={handleChange("clinicianTrainedLocation")}
-                  {...(errors["clinicianTrainedLocation"] && {
-                    error: true,
-                    helperText: errors["clinicianTrainedLocation"],
-                  })}
-                />
-                <TextField
-                  required
-                  id="meetingLink"
-                  label="Meeting Link"
-                  name="meetingLink"
-                  autoComplete="meetingLink"
-                  placeholder="Enter your personal meeting link"
-                  size="small"
-                  value={meetingLink}
-                  onChange={handleChange("meetingLink")}
-                  {...(errors["meetingLink"] && {
-                    error: true,
-                    helperText: errors["meetingLink"],
-                  })}
-                />
-              </Stack>
+                    <Typography variant="overline">User Information</Typography>
+                    <Typography>AccountID : {_id}</Typography>
+                    <Typography>Role : {role}</Typography>
+                    <Typography>Username : {username}</Typography>
+                    <Typography>
+                      Account created on: {Date(createdAt)}
+                    </Typography>
+                    <Typography> Last updated on: {Date(updatedAt)}</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={4}>
+                  <Box
+                    component="form"
+                    noValidate
+                    onSubmit={handleFirebaseUpdate}
+                  >
+                    <Avatar
+                      alt={`${firstName} ${lastName}`}
+                      src={profilePhoto}
+                      sx={{ width: 100, height: 100 }}
+                    ></Avatar>
+                    <Button containerelement="label" size="small">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageAsFile}
+                        ref={inputFile}
+                      ></input>
+                    </Button>
+                    <IconButton
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      type="submit"
+                    >
+                      {profilePhotoUploading ? (
+                        <CircularProgress color="inherit" size={20} />
+                      ) : (
+                        <FileUploadIcon></FileUploadIcon>
+                      )}
+                    </IconButton>
+                  </Box>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <Stack spacing={2} direction="row">
+                    <FormControl size="small">
+                      <InputLabel id="demo-title">Title</InputLabel>
+                      <Select
+                        required
+                        labelId="demo-title"
+                        id="demo-title"
+                        value={title}
+                        label="Title"
+                        name="title"
+                        onChange={handleChange("title")}
+                      >
+                        <MenuItem value="">None</MenuItem>
+                        <MenuItem value={"Dr"}>Dr</MenuItem>
+                        <MenuItem value={"Mr"}>Mr</MenuItem>
+                        <MenuItem value={"Mrs"}>Mrs</MenuItem>
+                        <MenuItem value={"Ms"}>Ms</MenuItem>
+                        <MenuItem value={"Miss"}>Miss</MenuItem>
+                        <MenuItem value={"Mx"}>Mx</MenuItem>
+                        <MenuItem value={"Rev"}>Rev</MenuItem>
+                        <MenuItem value={"Sir"}>Sir</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <TextField
+                      required
+                      autoComplete="given-name"
+                      name="firstName"
+                      id="firstName"
+                      label="First Name"
+                      placeholder="Enter first name"
+                      size="small"
+                      value={firstName}
+                      onChange={handleChange("firstName")}
+                      {...(errors["firstName"] && {
+                        error: true,
+                        helperText: errors["firstName"],
+                      })}
+                    />
+                    <TextField
+                      required
+                      id="lastName"
+                      label="Last Name"
+                      name="lastName"
+                      autoComplete="family-name"
+                      placeholder="Enter last name"
+                      size="small"
+                      value={lastName}
+                      onChange={handleChange("lastName")}
+                      {...(errors["lastName"] && {
+                        error: true,
+                        helperText: errors["lastName"],
+                      })}
+                    />
+                  </Stack>
+                  <Stack spacing={2} direction="row" sx={{ mt: 2 }}>
+                    <FormControl sx={{ minWidth: 80 }} size="small">
+                      <InputLabel id="demo-experience">Experience</InputLabel>
+                      <Select
+                        labelId="demo-experience"
+                        id="demo-experience"
+                        value={yearsOfExperience}
+                        label="Experience"
+                        name="yearsOfExperience"
+                        onChange={handleChange("yearsOfExperience")}
+                      >
+                        {experienceDropDownValues.map((experience, index) => (
+                          <MenuItem key={index} value={experience}>
+                            {experience}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <FormControl sx={{ minWidth: 80 }} size="small">
+                      <InputLabel id="demo-gender">Gender</InputLabel>
+                      <Select
+                        labelId="demo-gender"
+                        id="demo-gender"
+                        value={gender}
+                        label="Gender"
+                        name="gender"
+                        onChange={handleChange("gender")}
+                      >
+                        <MenuItem value={"male"}>Male</MenuItem>
+                        <MenuItem value={"female"}>Female</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <TextField
+                      disabled
+                      id="email"
+                      label="Email Address"
+                      name="email"
+                      size="small"
+                      value={email}
+                    />
+                  </Stack>
+                  <Stack spacing={2} direction="row" sx={{ mt: 2 }}>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DatePicker
+                        label="Date of Birth"
+                        value={dateOfBirth}
+                        onChange={(newValue) => {
+                          setValues({
+                            ...values,
+                            dateOfBirth: newValue,
+                          });
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </LocalizationProvider>
+                    <TextField
+                      id="clinicianTrainedLocation"
+                      label="Clinician Trained Location"
+                      name="clinicianTrainedLocation"
+                      size="small"
+                      placeholder="Enter clinic trained location"
+                      value={clinicianTrainedLocation}
+                      sx={{ width: 300 }}
+                      onChange={handleChange("clinicianTrainedLocation")}
+                      {...(errors["clinicianTrainedLocation"] && {
+                        error: true,
+                        helperText: errors["clinicianTrainedLocation"],
+                      })}
+                    />
+                  </Stack>
+                </Grid>
+                <Grid item xs={6}>
+                  <Stack direction="column" spacing={2}>
+                    <TextField
+                      id="aboutClinician"
+                      label="About yourself"
+                      name="aboutClinician"
+                      placeholder="Add something about yourself..."
+                      size="small"
+                      multiline
+                      rows={10}
+                      value={aboutClinician}
+                      onChange={handleChange("aboutClinician")}
+                      helperText={`${aboutClinician.length}/${ABOUT_CLINICIAN_CHAR_LIMIT}`}
+                      {...(errors["aboutClinician"] && {
+                        error: true,
+                        helperText: errors["aboutClinician"],
+                      })}
+                    />
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    id="meetingLink"
+                    label="Meeting Link"
+                    name="meetingLink"
+                    autoComplete="meetingLink"
+                    placeholder="Enter your personal meeting link"
+                    size="small"
+                    value={meetingLink}
+                    onChange={handleChange("meetingLink")}
+                    {...(errors["meetingLink"] && {
+                      error: true,
+                      helperText: errors["meetingLink"],
+                    })}
+                  />
+                </Grid>
+              </Grid>
             </TabPanel>
             <TabPanel value={value} index={1}>
               <Typography variant="overline">Update Password</Typography>
@@ -1250,7 +1319,7 @@ const UserEditProfile = ({ history }) => {
           </Box>
           <Button
             onClick={handleUpdateProfile}
-            sx={{ mt: 2, boxShadow: 10, width: "40ch" }}
+            sx={{ mt: 2, boxShadow: 10 }}
             variant="contained"
           >
             Update

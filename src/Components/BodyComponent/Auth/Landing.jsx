@@ -1,49 +1,66 @@
-import React from "react";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
+import React, { Fragment } from "react";
+import { Stack, Button, AppBar, Toolbar, Typography, Box } from "@mui/material";
 import { Link, withRouter } from "react-router-dom";
 import { isAuth, signout } from "../../../Common/helpers";
 
 const Landing = ({ match, history }) => {
-  const landingHeader = () => (
-    <Stack spacing={2} direction="row">
-      {!isAuth() && (
-        <div>
-          {(match.path === "/signup" || match.path === "/") && (
-            <Link
-              to="/signin"
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <Button variant="contained" sx={{ mt: 2, mb: 2 }}>
-                Login
-              </Button>
-            </Link>
-          )}
-          {(match.path === "/signin" || match.path === "/") && (
-            <Link
-              to="/signup"
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <Button variant="contained" sx={{ mt: 2, mb: 2 }}>
-                Register
-              </Button>
-            </Link>
-          )}
-        </div>
-      )}
-      {isAuth() &&
-        (isAuth().role === "spoke" ||
-          isAuth().role === "hub" ||
-          isAuth().role === "admin") && (
-          <div className="username">
-            {isAuth().firstName} {isAuth().lastName}
-          </div>
+  return (
+    <AppBar position="static">
+      <Toolbar
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexFlow: "row wrap",
+        }}
+      >
+        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+          <Box style={{ display: "flex", alignItems: "center" }} sx={{ ml: 0 }}>
+            <Box
+              component="img"
+              sx={{
+                height: 40,
+              }}
+              alt="PROMOTE"
+              src={`${process.env.REACT_APP_LOGO}`}
+            />
+          </Box>
+        </Link>
+        {!isAuth() && (
+          <Fragment>
+            {(match.path === "/signup" || match.path === "/") && (
+              <Link
+                to="/signin"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <Button variant="contained" color="secondary">
+                  Login
+                </Button>
+              </Link>
+            )}
+            {(match.path === "/signin" || match.path === "/") && (
+              <Link
+                to="/signup"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <Button variant="contained" color="secondary">
+                  Register
+                </Button>
+              </Link>
+            )}
+          </Fragment>
         )}
-      {isAuth() && (
-        <div>
+        {isAuth() &&
+          (isAuth().role === "spoke" ||
+            isAuth().role === "hub" ||
+            isAuth().role === "admin") && (
+            <Typography>
+              {isAuth().firstName} {isAuth().lastName}
+            </Typography>
+          )}
+        {isAuth() && (
           <Button
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            color="error"
             onClick={() => {
               signout(() => {
                 history.push("/");
@@ -52,12 +69,10 @@ const Landing = ({ match, history }) => {
           >
             Logout
           </Button>
-        </div>
-      )}
-    </Stack>
+        )}
+      </Toolbar>
+    </AppBar>
   );
-
-  return <div>{landingHeader()}</div>;
 };
 
 export default withRouter(Landing);
