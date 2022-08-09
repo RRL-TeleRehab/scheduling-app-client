@@ -1,24 +1,30 @@
 import React, { useEffect, useState, Fragment } from "react";
 import NavBreadCrumb from "../NavBreadCrumb";
 import axios from "axios";
-import { getCookie } from "../../../Common/helpers";
+import { getCookie, convertToDate } from "../../../Common/helpers";
 import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import {
+  CircularProgress,
+  Tooltip,
+  Avatar,
+  Button,
+  Paper,
+  Table,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableContainer,
+  TableCell,
+  Typography,
+  Badge,
+  Stack,
+  Pagination,
+  tableCellClasses,
+} from "@mui/material";
 import HelpIcon from "@mui/icons-material/Help";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Link } from "react-router-dom";
-import Button from "@mui/material/Button";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
-import { CircularProgress, Badge } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -57,21 +63,29 @@ const RequestedSpokeAppointments = () => {
   const [values, setValues] = useState({
     requestedAppointments: [],
     loading: false,
+    numberOfPages: 0,
+    pageNumber: 1,
   });
-  const { requestedAppointments, loading } = values;
+  const { requestedAppointments, loading, numberOfPages, pageNumber } = values;
+
   const token = getCookie("token");
+
+  const handleChange = (event, newPage) => {
+    setValues({ ...values, pageNumber: newPage });
+  };
 
   const getRequestedAppointments = () => {
     setValues({ ...values, loading: true });
     axios({
       method: "GET",
-      url: `${process.env.REACT_APP_API}/request-appointment`,
+      url: `${process.env.REACT_APP_API}/request-appointment?page=${pageNumber}`,
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
         setValues({
           ...values,
           requestedAppointments: response.data.appointments,
+          numberOfPages: response.data.totalPages,
           loading: false,
         });
       })
@@ -80,16 +94,10 @@ const RequestedSpokeAppointments = () => {
         console.log("Appointments Info ERROR", error.response.data.error);
       });
   };
-  const convertToDate = (str) => {
-    var date = new Date(str);
-    var month = ("0" + (date.getMonth() + 1)).slice(-2);
-    var day = ("0" + date.getDate()).slice(-2);
-    return [month, day, date.getFullYear()].join("-");
-  };
 
   useEffect(() => {
     getRequestedAppointments();
-  }, []);
+  }, [pageNumber]);
 
   return (
     <Fragment>
@@ -102,97 +110,111 @@ const RequestedSpokeAppointments = () => {
       ) : (
         <Fragment>
           {requestedAppointments.length > 0 ? (
-            <TableContainer component={Paper}>
-              <Table sx={tableHeadStyle} aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell></StyledTableCell>
-                    <StyledTableCell>Requested To</StyledTableCell>
-                    <StyledTableCell>Requested For</StyledTableCell>
-                    <StyledTableCell>Appointment Date</StyledTableCell>
-                    <StyledTableCell>Appointment Time</StyledTableCell>
-                    <StyledTableCell colSpan={2}>
-                      Appointment Status
-                    </StyledTableCell>
-                    <StyledTableCell colSpan={2}>
-                      Appointment request Id
-                    </StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {requestedAppointments.map((row) => (
-                    <StyledTableRow style={{ textAlign: "left" }} key={row._id}>
-                      <StyledTableCell>
-                        <Badge
-                          overlap="circular"
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "right",
-                          }}
-                          badgeContent={
-                            <SmallAvatar
-                              alt="img"
-                              src={row.requestedBy.profilePhoto}
-                            />
-                          }
-                        >
-                          <Avatar
-                            alt="img"
-                            src={row.requestedTo.profilePhoto}
-                          />
-                        </Badge>
+            <Fragment>
+              <TableContainer component={Paper}>
+                <Table sx={tableHeadStyle} aria-label="customized table">
+                  <TableHead>
+                    <TableRow>
+                      <StyledTableCell></StyledTableCell>
+                      <StyledTableCell>Requested To</StyledTableCell>
+                      <StyledTableCell>Requested For</StyledTableCell>
+                      <StyledTableCell>Appointment Date</StyledTableCell>
+                      <StyledTableCell>Appointment Time</StyledTableCell>
+                      <StyledTableCell colSpan={2}>
+                        Appointment Status
                       </StyledTableCell>
-                      <StyledTableCell>
-                        {row.requestedTo.firstName} {row.requestedTo.lastName}
+                      <StyledTableCell colSpan={2}>
+                        Appointment request Id
                       </StyledTableCell>
-                      <StyledTableCell>
-                        {row.requestedFor.firstName} {row.requestedFor.lastName}
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        {convertToDate(row.appointmentDate)}
-                      </StyledTableCell>
-                      <StyledTableCell>{row.appointmentTime}</StyledTableCell>
-                      <StyledTableCell>{row.status}</StyledTableCell>
-                      <StyledTableCell>
-                        <Tooltip
-                          title={
-                            row.status === "pending" ? "PENDING" : "REJECTED"
-                          }
-                        >
-                          <span>
-                            <Button>
-                              {row.status === "pending" && (
-                                <HelpIcon color="primary"></HelpIcon>
-                              )}
-                              {row.status === "rejected" && (
-                                <CancelIcon color="error"></CancelIcon>
-                              )}
-                            </Button>
-                          </span>
-                        </Tooltip>
-                      </StyledTableCell>
-                      <StyledTableCell component="th" scope="row">
-                        {row._id}
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Tooltip title="more information">
-                          <Button
-                            size="small"
-                            component={Link}
-                            to={`/spoke/request/appointment/${row._id}`}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {requestedAppointments.map((row) => (
+                      <StyledTableRow
+                        style={{ textAlign: "left" }}
+                        key={row._id}
+                      >
+                        <StyledTableCell>
+                          <Badge
+                            overlap="circular"
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "right",
+                            }}
+                            badgeContent={
+                              <SmallAvatar
+                                alt="img"
+                                src={row.requestedBy.profilePhoto}
+                              />
+                            }
                           >
-                            <OpenInFullIcon
-                              color="primary"
+                            <Avatar
+                              alt="img"
+                              src={row.requestedTo.profilePhoto}
+                            />
+                          </Badge>
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {row.requestedTo.firstName} {row.requestedTo.lastName}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {row.requestedFor.firstName}{" "}
+                          {row.requestedFor.lastName}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {convertToDate(row.appointmentDate)}
+                        </StyledTableCell>
+                        <StyledTableCell>{row.appointmentTime}</StyledTableCell>
+                        <StyledTableCell>{row.status}</StyledTableCell>
+                        <StyledTableCell>
+                          <Tooltip
+                            title={
+                              row.status === "pending" ? "PENDING" : "REJECTED"
+                            }
+                          >
+                            <span>
+                              <Button>
+                                {row.status === "pending" && (
+                                  <HelpIcon color="primary"></HelpIcon>
+                                )}
+                                {row.status === "rejected" && (
+                                  <CancelIcon color="error"></CancelIcon>
+                                )}
+                              </Button>
+                            </span>
+                          </Tooltip>
+                        </StyledTableCell>
+                        <StyledTableCell component="th" scope="row">
+                          {row._id}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          <Tooltip title="more information">
+                            <Button
                               size="small"
-                            ></OpenInFullIcon>
-                          </Button>
-                        </Tooltip>
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                              component={Link}
+                              to={`/spoke/request/appointment/${row._id}`}
+                            >
+                              <OpenInFullIcon
+                                color="primary"
+                                size="small"
+                              ></OpenInFullIcon>
+                            </Button>
+                          </Tooltip>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Stack sx={{ m: 2 }} alignItems="center">
+                <Pagination
+                  count={numberOfPages}
+                  defaultPage={pageNumber}
+                  color="primary"
+                  onChange={handleChange}
+                />
+              </Stack>
+            </Fragment>
           ) : (
             <Typography>No appointment requests found</Typography>
           )}
