@@ -18,9 +18,12 @@ import Activate from "../BodyComponent/Auth/Activate";
 import Stories from "../BodyComponent/AdminComponents/Stories";
 import NewStory from "../BodyComponent/AdminComponents/NewStory";
 import UpdateStory from "../BodyComponent/AdminComponents/UpdateStory";
+import AdminAppointments from "../BodyComponent/AdminComponents/AdminAppointments";
+import AdminRequests from "../BodyComponent/AdminComponents/AdminRequests";
 import UserRoute from "../BodyComponent/Auth/UserRoute";
 import HubRoute from "../BodyComponent/Auth/HubRoute";
 import SpokeRoute from "../BodyComponent/Auth/SpokeRoute";
+import PublicRoute from "../BodyComponent/Auth/PublicRoute";
 import AdminRoute from "../BodyComponent/Auth/AdminRoute";
 import RequestedHubAppointmentById from "../BodyComponent/RequestedHubAppointmentById";
 import HubConfirmedBookings from "../BodyComponent/HubConfirmedBookings";
@@ -92,11 +95,11 @@ export default function HeaderComponent() {
             path="/request/appointment"
             component={RequestedHubAppointments}
           ></HubRoute>
-          <HubRoute
+          <PublicRoute
             exact
             path="/request/appointment/:appointmentId"
             component={RequestedHubAppointmentById}
-          ></HubRoute>
+          ></PublicRoute>
           <SpokeRoute
             exact
             path="/spoke/request/appointment/:appointmentId"
@@ -107,11 +110,11 @@ export default function HeaderComponent() {
             path="/hub/confirmedBookings"
             component={HubConfirmedBookings}
           ></HubRoute>
-          <HubRoute
+          <PublicRoute
             exact
             path="/hub/confirmedBookings/:appointmentId"
             component={ConfirmedAppointmentInfoById}
-          ></HubRoute>
+          ></PublicRoute>
           <SpokeRoute
             exact
             path="/spoke/confirmedBookings/:appointmentId"
@@ -151,6 +154,16 @@ export default function HeaderComponent() {
             path="/admin/newStory"
             exact
             component={NewStory}
+          ></AdminRoute>
+          <AdminRoute
+            path="/admin/requests"
+            exact
+            component={AdminRequests}
+          ></AdminRoute>
+          <AdminRoute
+            path="/admin/appointments"
+            exact
+            component={AdminAppointments}
           ></AdminRoute>
           <AdminRoute
             path="/admin/story/update/:storyId"

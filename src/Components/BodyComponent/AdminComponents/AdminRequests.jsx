@@ -1,39 +1,39 @@
-import React, { useEffect, useState, Fragment } from "react";
-import NavBreadCrumb from "./NavBreadCrumb";
+import React, { useState, useEffect, Fragment } from "react";
+import NavBreadCrumb from "../NavBreadCrumb";
+import { getCookie, convertToDate } from "../../../Common/helpers";
 import axios from "axios";
-import { getCookie, convertToDate } from "../../Common/helpers";
 import { styled } from "@mui/material/styles";
 import {
+  CircularProgress,
+  Tooltip,
+  Avatar,
+  Button,
+  Paper,
   Table,
   TableBody,
-  TableContainer,
-  TableHead,
   TableRow,
-  Paper,
-  Button,
-  Avatar,
-  Tooltip,
-  CircularProgress,
-  Badge,
-  Typography,
+  TableHead,
+  TableContainer,
+  tableCellClasses,
   TableCell,
-  Pagination,
+  Typography,
+  Badge,
   Stack,
+  Pagination,
 } from "@mui/material";
-import { tableCellClasses } from "@mui/material/TableCell";
 import { Link } from "react-router-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import VerifiedIcon from "@mui/icons-material/Verified";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import HelpIcon from "@mui/icons-material/Help";
+import CancelIcon from "@mui/icons-material/Cancel";
 
-const appointmentStatusValues = {
-  active: {
-    message: "active",
-    icon: <NotificationsActiveIcon color="success" />,
+const requestStatusValues = {
+  pending: {
+    message: "pending",
+    icon: <HelpIcon color="primary" />,
   },
-  fulfilled: { message: "fulfilled", icon: <VerifiedIcon color="primary" /> },
-  cancelled: { message: "cancelled", icon: <HighlightOffIcon color="error" /> },
+  accepted: { message: "accepted", icon: <VerifiedIcon color="success" /> },
+  rejected: { message: "cancelled", icon: <CancelIcon color="error" /> },
 };
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -48,12 +48,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const SmallAvatar = styled(Avatar)(({ theme }) => ({
-  width: 22,
-  height: 22,
-  border: `2px solid ${theme.palette.background.paper}`,
-}));
-
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
@@ -64,19 +58,25 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+const SmallAvatar = styled(Avatar)(({ theme }) => ({
+  width: 22,
+  height: 22,
+  border: `2px solid ${theme.palette.background.paper}`,
+}));
+
 const tableHeadStyle = {
   textTransform: "uppercase",
   minWidth: 700,
 };
 
-const HubConfirmedBookings = () => {
+const AdminRequests = () => {
   const [values, setValues] = useState({
-    confirmedAppointments: [],
+    requestedAppointments: [],
     loading: false,
     numberOfPages: 0,
     pageNumber: 1,
   });
-  const { confirmedAppointments, loading, numberOfPages, pageNumber } = values;
+  const { requestedAppointments, loading, numberOfPages, pageNumber } = values;
 
   const token = getCookie("token");
 
@@ -84,45 +84,39 @@ const HubConfirmedBookings = () => {
     setValues({ ...values, pageNumber: newPage });
   };
 
-  const getConfirmedAppointments = () => {
+  const getRequestedAppointments = () => {
     setValues({ ...values, loading: true });
     axios({
       method: "GET",
-      url: `${process.env.REACT_APP_API}/confirmed-appointments?page=${pageNumber}`,
+      url: `${process.env.REACT_APP_API}/all-requests?page=${pageNumber}`,
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
         setValues({
           ...values,
-          confirmedAppointments: response.data.confirmedBookings,
+          requestedAppointments: response.data.appointmentRequests,
           numberOfPages: response.data.totalPages,
           loading: false,
         });
       })
       .catch((error) => {
         setValues({ ...values, loading: false });
-        console.log(
-          "Confirmed Appointments Info ERROR",
-          error.response.data.error
-        );
+        console.log("Appointments Info Error", error.response.data.error);
       });
   };
 
   useEffect(() => {
-    getConfirmedAppointments();
+    getRequestedAppointments();
   }, [pageNumber]);
 
   return (
     <Fragment>
-      <NavBreadCrumb
-        path="/hub/confirmedBookings"
-        name="/hub/confirmedBookings"
-      ></NavBreadCrumb>{" "}
+      <NavBreadCrumb path="/admin/requests" name="/requests"></NavBreadCrumb>{" "}
       {loading ? (
-        <CircularProgress></CircularProgress>
+        <CircularProgress color="inherit" />
       ) : (
         <Fragment>
-          {confirmedAppointments.length > 0 ? (
+          {requestedAppointments.length > 0 ? (
             <Fragment>
               <TableContainer component={Paper}>
                 <Table sx={tableHeadStyle} aria-label="customized table">
@@ -130,6 +124,7 @@ const HubConfirmedBookings = () => {
                     <TableRow>
                       <StyledTableCell></StyledTableCell>
                       <StyledTableCell>Requested By</StyledTableCell>
+                      <StyledTableCell>Requested To</StyledTableCell>
                       <StyledTableCell>Requested For</StyledTableCell>
                       <StyledTableCell>Appointment Date</StyledTableCell>
                       <StyledTableCell>Appointment Time</StyledTableCell>
@@ -137,12 +132,12 @@ const HubConfirmedBookings = () => {
                         Appointment Status
                       </StyledTableCell>
                       <StyledTableCell colSpan={2}>
-                        Appointment confirmation Id
+                        Appointment request Id
                       </StyledTableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {confirmedAppointments.map((row) => (
+                    {requestedAppointments.map((row) => (
                       <StyledTableRow
                         style={{ textAlign: "left" }}
                         key={row._id}
@@ -164,11 +159,14 @@ const HubConfirmedBookings = () => {
                             <Avatar
                               alt="img"
                               src={row.requestedBy.profilePhoto}
-                            />
+                            ></Avatar>
                           </Badge>
                         </StyledTableCell>
                         <StyledTableCell>
                           {row.requestedBy.firstName} {row.requestedBy.lastName}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {row.requestedTo.firstName} {row.requestedTo.lastName}
                         </StyledTableCell>
                         <StyledTableCell>
                           {row.requestedFor.firstName}{" "}
@@ -180,41 +178,41 @@ const HubConfirmedBookings = () => {
                         <StyledTableCell>{row.appointmentTime}</StyledTableCell>
                         <StyledTableCell>{row.status}</StyledTableCell>
                         <StyledTableCell>
-                          {row.status === "active" && (
+                          {row.status === "pending" && (
                             <Tooltip
-                              title={appointmentStatusValues[
+                              title={requestStatusValues[
                                 row.status
                               ].message.toUpperCase()}
                             >
                               <span>
                                 <Button>
-                                  {appointmentStatusValues[row.status].icon}
+                                  {requestStatusValues[row.status].icon}
                                 </Button>
                               </span>
                             </Tooltip>
                           )}
-                          {row.status === "fulfilled" && (
+                          {row.status === "accepted" && (
                             <Tooltip
-                              title={appointmentStatusValues[
+                              title={requestStatusValues[
                                 row.status
                               ].message.toUpperCase()}
                             >
                               <span>
                                 <Button>
-                                  {appointmentStatusValues[row.status].icon}
+                                  {requestStatusValues[row.status].icon}
                                 </Button>
                               </span>
                             </Tooltip>
                           )}
-                          {row.status === "cancelled" && (
+                          {row.status === "rejected" && (
                             <Tooltip
-                              title={appointmentStatusValues[
+                              title={requestStatusValues[
                                 row.status
                               ].message.toUpperCase()}
                             >
                               <span>
                                 <Button>
-                                  {appointmentStatusValues[row.status].icon}
+                                  {requestStatusValues[row.status].icon}
                                 </Button>
                               </span>
                             </Tooltip>
@@ -228,7 +226,7 @@ const HubConfirmedBookings = () => {
                             <Button
                               size="small"
                               component={Link}
-                              to={`/hub/confirmedBookings/${row._id}`}
+                              to={`/request/appointment/${row._id}`}
                             >
                               <OpenInFullIcon
                                 color="primary"
@@ -252,12 +250,11 @@ const HubConfirmedBookings = () => {
               </Stack>
             </Fragment>
           ) : (
-            <Typography>No Appointments available</Typography>
+            <Typography>No appointment requests found</Typography>
           )}
         </Fragment>
       )}
     </Fragment>
   );
 };
-
-export default HubConfirmedBookings;
+export default AdminRequests;

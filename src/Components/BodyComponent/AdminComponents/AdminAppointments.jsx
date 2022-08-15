@@ -1,26 +1,26 @@
-import React, { useEffect, useState, Fragment } from "react";
-import NavBreadCrumb from "./NavBreadCrumb";
+import React, { useState, useEffect, Fragment } from "react";
+import NavBreadCrumb from "../NavBreadCrumb";
+import { getCookie, convertToDate } from "../../../Common/helpers";
 import axios from "axios";
-import { getCookie, convertToDate } from "../../Common/helpers";
 import { styled } from "@mui/material/styles";
 import {
+  CircularProgress,
+  Tooltip,
+  Avatar,
+  Button,
+  Paper,
   Table,
   TableBody,
-  TableContainer,
-  TableHead,
   TableRow,
-  Paper,
-  Button,
-  Avatar,
-  Tooltip,
-  CircularProgress,
-  Badge,
-  Typography,
+  TableHead,
+  TableContainer,
+  tableCellClasses,
   TableCell,
-  Pagination,
+  Typography,
+  Badge,
   Stack,
+  Pagination,
 } from "@mui/material";
-import { tableCellClasses } from "@mui/material/TableCell";
 import { Link } from "react-router-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
@@ -48,12 +48,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const SmallAvatar = styled(Avatar)(({ theme }) => ({
-  width: 22,
-  height: 22,
-  border: `2px solid ${theme.palette.background.paper}`,
-}));
-
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
@@ -64,18 +58,25 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+const SmallAvatar = styled(Avatar)(({ theme }) => ({
+  width: 22,
+  height: 22,
+  border: `2px solid ${theme.palette.background.paper}`,
+}));
+
 const tableHeadStyle = {
   textTransform: "uppercase",
   minWidth: 700,
 };
 
-const HubConfirmedBookings = () => {
+const AdminAppointments = () => {
   const [values, setValues] = useState({
     confirmedAppointments: [],
     loading: false,
     numberOfPages: 0,
     pageNumber: 1,
   });
+
   const { confirmedAppointments, loading, numberOfPages, pageNumber } = values;
 
   const token = getCookie("token");
@@ -84,11 +85,11 @@ const HubConfirmedBookings = () => {
     setValues({ ...values, pageNumber: newPage });
   };
 
-  const getConfirmedAppointments = () => {
+  const getAllAppointments = () => {
     setValues({ ...values, loading: true });
     axios({
       method: "GET",
-      url: `${process.env.REACT_APP_API}/confirmed-appointments?page=${pageNumber}`,
+      url: `${process.env.REACT_APP_API}/all-appointments?page=${pageNumber}`,
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
@@ -109,14 +110,14 @@ const HubConfirmedBookings = () => {
   };
 
   useEffect(() => {
-    getConfirmedAppointments();
+    getAllAppointments();
   }, [pageNumber]);
 
   return (
     <Fragment>
       <NavBreadCrumb
-        path="/hub/confirmedBookings"
-        name="/hub/confirmedBookings"
+        path="/admin/appointments"
+        name="/Appointments"
       ></NavBreadCrumb>{" "}
       {loading ? (
         <CircularProgress></CircularProgress>
@@ -130,6 +131,7 @@ const HubConfirmedBookings = () => {
                     <TableRow>
                       <StyledTableCell></StyledTableCell>
                       <StyledTableCell>Requested By</StyledTableCell>
+                      <StyledTableCell>Requested To</StyledTableCell>
                       <StyledTableCell>Requested For</StyledTableCell>
                       <StyledTableCell>Appointment Date</StyledTableCell>
                       <StyledTableCell>Appointment Time</StyledTableCell>
@@ -144,7 +146,7 @@ const HubConfirmedBookings = () => {
                   <TableBody>
                     {confirmedAppointments.map((row) => (
                       <StyledTableRow
-                        style={{ textAlign: "left" }}
+                        style={{ textAlign: "center" }}
                         key={row._id}
                       >
                         <StyledTableCell>
@@ -169,6 +171,9 @@ const HubConfirmedBookings = () => {
                         </StyledTableCell>
                         <StyledTableCell>
                           {row.requestedBy.firstName} {row.requestedBy.lastName}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {row.requestedTo.firstName} {row.requestedTo.lastName}
                         </StyledTableCell>
                         <StyledTableCell>
                           {row.requestedFor.firstName}{" "}
@@ -259,5 +264,4 @@ const HubConfirmedBookings = () => {
     </Fragment>
   );
 };
-
-export default HubConfirmedBookings;
+export default AdminAppointments;
