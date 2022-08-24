@@ -7,6 +7,7 @@ import {
   getCookie,
   signout,
   updateUserInfo,
+  convertToDate,
 } from "../../Common/helpers";
 import NavBreadCrumb from "./NavBreadCrumb";
 import PropTypes from "prop-types";
@@ -545,6 +546,26 @@ const UserEditProfile = ({ history }) => {
       });
   };
 
+  const handleCoursesDelete = (courseToDelete) => () => {
+    const newCourseList = clinicianProfessionalCourses.filter(
+      (course) => course !== courseToDelete
+    );
+    setValues({
+      ...values,
+      clinicianProfessionalCourses: newCourseList,
+    });
+  };
+
+  const handleSpecialtiesDelete = (specialtyToDelete) => () => {
+    const newSpecialtyList = clinicianSpecialization.filter(
+      (specialty) => specialty !== specialtyToDelete
+    );
+    setValues({
+      ...values,
+      clinicianSpecialization: newSpecialtyList,
+    });
+  };
+
   const handleUpdateProfile = (event) => {
     event.preventDefault();
     if (validate()) {
@@ -654,6 +675,7 @@ const UserEditProfile = ({ history }) => {
                 direction="row"
                 alignItems="center"
                 justify="center"
+                spacing={1}
                 sx={{
                   display: "flex",
                   flexDirection: "row",
@@ -661,23 +683,25 @@ const UserEditProfile = ({ history }) => {
                   alignItems: "center",
                 }}
               >
-                <Grid item xs={8}>
+                <Grid item xs={6}>
                   <Box
                     sx={{
                       flexDirection: "column",
                     }}
                   >
                     <Typography variant="overline">User Information</Typography>
-                    <Typography>AccountID : {_id}</Typography>
-                    <Typography>Role : {role}</Typography>
-                    <Typography>Username : {username}</Typography>
+                    <Typography>User ID: {_id}</Typography>
+                    <Typography>Role: {role}</Typography>
+                    <Typography>Username: {username}</Typography>
                     <Typography>
-                      Account created on: {Date(createdAt)}
+                      Created on: {convertToDate(createdAt)}
                     </Typography>
-                    <Typography> Last updated on: {Date(updatedAt)}</Typography>
+                    <Typography>
+                      Updated on: {convertToDate(updatedAt)}
+                    </Typography>
                   </Box>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <Box
                     component="form"
                     noValidate
@@ -823,7 +847,7 @@ const UserEditProfile = ({ history }) => {
                     </LocalizationProvider>
                     <TextField
                       id="clinicianTrainedLocation"
-                      label="Clinician Trained Location"
+                      label="Training Location"
                       name="clinicianTrainedLocation"
                       size="small"
                       placeholder="Enter clinic trained location"
@@ -836,6 +860,26 @@ const UserEditProfile = ({ history }) => {
                       })}
                     />
                   </Stack>
+                  {role === "hub" && (
+                    <Stack spacing={2} direction="row" sx={{ mt: 2 }}>
+                      <TextField
+                        required
+                        fullWidth
+                        id="meetingLink"
+                        label="Meeting Link"
+                        name="meetingLink"
+                        autoComplete="meetingLink"
+                        placeholder="Enter your personal meeting link"
+                        size="small"
+                        value={meetingLink}
+                        onChange={handleChange("meetingLink")}
+                        {...(errors["meetingLink"] && {
+                          error: true,
+                          helperText: errors["meetingLink"],
+                        })}
+                      />
+                    </Stack>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <Stack direction="column" spacing={2}>
@@ -857,102 +901,119 @@ const UserEditProfile = ({ history }) => {
                     />
                   </Stack>
                 </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    id="meetingLink"
-                    label="Meeting Link"
-                    name="meetingLink"
-                    autoComplete="meetingLink"
-                    placeholder="Enter your personal meeting link"
-                    size="small"
-                    value={meetingLink}
-                    onChange={handleChange("meetingLink")}
-                    {...(errors["meetingLink"] && {
-                      error: true,
-                      helperText: errors["meetingLink"],
-                    })}
-                  />
-                </Grid>
               </Grid>
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <Typography variant="overline">Update Password</Typography>
-              <TextField
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type={showPassword ? "text" : "password"}
-                id="password"
-                placeholder="Enter new password"
-                size="small"
-                autoComplete="new-password"
-                value={newPassword}
-                sx={{ width: "40ch" }}
-                onChange={handleChange("newPassword")}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handlePasswordVisibility}
-                        aria-label="toggle password"
-                        edge="end"
-                      >
-                        {showPassword ? (
-                          <VisibilityOffIcon></VisibilityOffIcon>
-                        ) : (
-                          <VisibilityIcon></VisibilityIcon>
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                {...(errors["newPassword"] && {
-                  error: true,
-                  helperText: errors["newPassword"],
-                })}
-              />
-              <TextField
-                required
-                fullWidth
-                name="confirmPassword"
-                label="Confirm Password"
-                type={showConfirmPassword ? "text" : "password"}
-                id="confirmPassword"
-                autoComplete="new-password"
-                placeholder="Confirm new password"
-                size="small"
-                value={confirmNewPassword}
-                sx={{ width: "40ch" }}
-                onChange={handleChange("confirmNewPassword")}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handleConfirmPasswordVisibility}
-                        aria-label="toggle password"
-                        edge="end"
-                      >
-                        {showConfirmPassword ? (
-                          <VisibilityOffIcon></VisibilityOffIcon>
-                        ) : (
-                          <VisibilityIcon></VisibilityIcon>
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                {...(errors["confirmNewPassword"] && {
-                  error: true,
-                  helperText: errors["confirmNewPassword"],
-                })}
-              />
+              <Stack direction="column" spacing={1}>
+                <Typography variant="overline">Update Password</Typography>
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  placeholder="Enter new password"
+                  size="small"
+                  autoComplete="new-password"
+                  value={newPassword}
+                  sx={{ width: "40ch" }}
+                  onChange={handleChange("newPassword")}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={handlePasswordVisibility}
+                          aria-label="toggle password"
+                          edge="end"
+                        >
+                          {showPassword ? (
+                            <VisibilityOffIcon></VisibilityOffIcon>
+                          ) : (
+                            <VisibilityIcon></VisibilityIcon>
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  {...(errors["newPassword"] && {
+                    error: true,
+                    helperText: errors["newPassword"],
+                  })}
+                />
+                <TextField
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  id="confirmPassword"
+                  autoComplete="new-password"
+                  placeholder="Confirm new password"
+                  size="small"
+                  value={confirmNewPassword}
+                  sx={{ width: "40ch" }}
+                  onChange={handleChange("confirmNewPassword")}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={handleConfirmPasswordVisibility}
+                          aria-label="toggle password"
+                          edge="end"
+                        >
+                          {showConfirmPassword ? (
+                            <VisibilityOffIcon></VisibilityOffIcon>
+                          ) : (
+                            <VisibilityIcon></VisibilityIcon>
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  {...(errors["confirmNewPassword"] && {
+                    error: true,
+                    helperText: errors["confirmNewPassword"],
+                  })}
+                />
+              </Stack>
             </TabPanel>
             <TabPanel value={value} index={2}>
-              <Typography variant="overline">Clinic Information</Typography>
-              <Stack direction="row">
-                <FormControl sx={{ minWidth: 80 }} size="small">
+              <Stack spacing={1} direction="column">
+                <Typography variant="overline">Clinic Information</Typography>
+                <TextField
+                  required
+                  sx={{ width: "40ch" }}
+                  id="clinicName"
+                  label="Clinic Name"
+                  name="clinicName"
+                  placeholder="Enter clinic name"
+                  size="small"
+                  value={clinicName}
+                  onChange={handleChange("clinicName")}
+                  {...(errors["clinicName"] && {
+                    error: true,
+                    helperText: errors["clinicName"],
+                  })}
+                />
+                <TextField
+                  sx={{ width: "40ch" }}
+                  id="clinicContact"
+                  label="Clinic contact"
+                  name="clinicContact"
+                  size="small"
+                  pattern="[0-9]*"
+                  value={handleContact(clinicContact)}
+                  placeholder="(xxx) xxx-xxxx"
+                  maxLength="10"
+                  minLength="10"
+                  onChange={handleChange("clinicContact")}
+                  {...(errors["clinicContact"] && {
+                    error: true,
+                    helperText: errors["clinicContact"],
+                  })}
+                />
+                <FormControl sx={{ width: "40ch" }} size="small">
                   <InputLabel id="demo-registeredYear">
                     Registered Year
                   </InputLabel>
@@ -972,46 +1033,12 @@ const UserEditProfile = ({ history }) => {
                   </Select>
                 </FormControl>
                 <TextField
-                  required
-                  id="clinicName"
-                  label="Clinic Name"
-                  name="clinicName"
-                  placeholder="Enter clinic name"
-                  size="small"
-                  value={clinicName}
-                  onChange={handleChange("clinicName")}
-                  {...(errors["clinicName"] && {
-                    error: true,
-                    helperText: errors["clinicName"],
-                  })}
-                />
-                <TextField
-                  id="clinicContact"
-                  label="Clinic contact"
-                  name="clinicContact"
-                  size="small"
-                  pattern="[0-9]*"
-                  value={handleContact(clinicContact)}
-                  placeholder="(xxx) xxx-xxxx"
-                  maxLength="10"
-                  minLength="10"
-                  sx={{ width: 300 }}
-                  onChange={handleChange("clinicContact")}
-                  {...(errors["clinicContact"] && {
-                    error: true,
-                    helperText: errors["clinicContact"],
-                  })}
-                />
-              </Stack>
-
-              <Stack direction="row" sx={{ mt: 2 }}>
-                <TextField
+                  sx={{ width: "40ch" }}
                   id="clinicRegistrationNo"
                   label="Clinic registration no"
                   name="clinicRegistrationNo"
                   size="small"
                   value={clinicRegistrationNo}
-                  sx={{ width: 300 }}
                   onChange={handleChange("clinicRegistrationNo")}
                   {...(errors["clinicRegistrationNo"] && {
                     error: true,
@@ -1019,13 +1046,13 @@ const UserEditProfile = ({ history }) => {
                   })}
                 />
                 <TextField
+                  sx={{ width: "40ch" }}
                   id="affiliatedFrom"
                   label="Affiliated From"
                   name="affiliatedFrom"
                   size="small"
                   placeholder="Enter clinic affiliation name"
                   value={affiliatedFrom}
-                  sx={{ width: 300 }}
                   onChange={handleChange("affiliatedFrom")}
                   {...(errors["affiliatedFrom"] && {
                     error: true,
@@ -1035,55 +1062,79 @@ const UserEditProfile = ({ history }) => {
               </Stack>
             </TabPanel>
             <TabPanel value={value} index={3}>
-              <Typography variant="overline">Clinician Skills</Typography>
-              <TextField
-                id="newCourse"
-                label="Professional Courses"
-                name="newCourse"
-                size="small"
-                placeholder="Enter course name"
-                value={newCourse}
-                sx={{ width: 300 }}
-                onChange={handleChange("newCourse")}
-                onKeyDown={handleAddNewCourse(newCourse)}
-                {...(errors["newCourse"] && {
-                  error: true,
-                  helperText: errors["newCourse"],
-                })}
-              />
+              <Stack spacing={1} direction="column">
+                <Typography variant="overline">Clinician Skills</Typography>
+                <Stack
+                  direction="row"
+                  sx={{ alignItems: "center" }}
+                  spacing={1}
+                >
+                  <TextField
+                    id="newCourse"
+                    label="Professional Courses"
+                    name="newCourse"
+                    size="small"
+                    placeholder="Enter course name"
+                    value={newCourse}
+                    sx={{ width: 300 }}
+                    onChange={handleChange("newCourse")}
+                    onKeyDown={handleAddNewCourse(newCourse)}
+                    {...(errors["newCourse"] && {
+                      error: true,
+                      helperText: errors["newCourse"],
+                    })}
+                  />
 
-              {clinicianProfessionalCourses.length > 0
-                ? clinicianProfessionalCourses.map((course, index) => (
-                    <Chip size="small" key={index} label={course} />
-                  ))
-                : ""}
+                  {clinicianProfessionalCourses.length > 0
+                    ? clinicianProfessionalCourses.map((course, index) => (
+                        <Chip
+                          size="small"
+                          key={index}
+                          label={course}
+                          onDelete={handleCoursesDelete(course)}
+                        />
+                      ))
+                    : ""}
+                </Stack>
+                <Stack
+                  direction="row"
+                  sx={{ alignItems: "center" }}
+                  spacing={1}
+                >
+                  <TextField
+                    id="newSpecialty"
+                    label="Add new specialization"
+                    name="newSpecialty"
+                    size="small"
+                    placeholder="Add new specialization"
+                    value={newSpecialty}
+                    sx={{ width: 300 }}
+                    onChange={handleChange("newSpecialty")}
+                    onKeyDown={handleAddNewSpecialty(newSpecialty)}
+                    {...(errors["newSpecialty"] && {
+                      error: true,
+                      helperText: errors["newSpecialty"],
+                    })}
+                  />
 
-              <TextField
-                id="newSpecialty"
-                label="Add new specialization"
-                name="newSpecialty"
-                size="small"
-                placeholder="Add new specialization"
-                value={newSpecialty}
-                sx={{ width: 300 }}
-                onChange={handleChange("newSpecialty")}
-                onKeyDown={handleAddNewSpecialty(newSpecialty)}
-                {...(errors["newSpecialty"] && {
-                  error: true,
-                  helperText: errors["newSpecialty"],
-                })}
-              />
-
-              {clinicianSpecialization.length > 0
-                ? clinicianSpecialization.map((specialty, index) => (
-                    <Chip size="small" key={index} label={specialty} />
-                  ))
-                : ""}
+                  {clinicianSpecialization.length > 0
+                    ? clinicianSpecialization.map((specialty, index) => (
+                        <Chip
+                          size="small"
+                          key={index}
+                          label={specialty}
+                          onDelete={handleSpecialtiesDelete(specialty)}
+                        />
+                      ))
+                    : ""}
+                </Stack>
+              </Stack>
             </TabPanel>
             <TabPanel value={value} index={4}>
-              <Typography variant="overline">Clinic Address</Typography>
-              <Stack direction="row" sx={{ mt: 2 }}>
+              <Stack direction="column" spacing={1}>
+                <Typography variant="overline">Clinic Address</Typography>
                 <TextField
+                  sx={{ width: "40ch" }}
                   id="address1"
                   label="address1"
                   name="address1"
@@ -1105,6 +1156,7 @@ const UserEditProfile = ({ history }) => {
                   })}
                 />
                 <TextField
+                  sx={{ width: "40ch" }}
                   id="address2"
                   label="address2"
                   name="address2"
@@ -1126,6 +1178,7 @@ const UserEditProfile = ({ history }) => {
                   })}
                 />
                 <TextField
+                  sx={{ width: "40ch" }}
                   id="city"
                   label="city"
                   name="city"
@@ -1146,7 +1199,7 @@ const UserEditProfile = ({ history }) => {
                     helperText: errors["city"],
                   })}
                 />
-                <FormControl sx={{ minWidth: 150 }} size="small">
+                <FormControl sx={{ width: "40ch" }} size="small">
                   <InputLabel id="demo-country">Country</InputLabel>
                   <Select
                     labelId="demo-country"
@@ -1171,7 +1224,7 @@ const UserEditProfile = ({ history }) => {
                     ))}
                   </Select>
                 </FormControl>
-                <FormControl sx={{ minWidth: 150 }} size="small">
+                <FormControl sx={{ width: "40ch" }} size="small">
                   <InputLabel id="demo-province">Province</InputLabel>
                   <Select
                     labelId="demo-province"
@@ -1197,6 +1250,7 @@ const UserEditProfile = ({ history }) => {
                   </Select>
                 </FormControl>
                 <TextField
+                  sx={{ width: "40ch" }}
                   id="postalCode"
                   label="Postal Code"
                   name="postalCode"
@@ -1221,99 +1275,135 @@ const UserEditProfile = ({ history }) => {
               </Stack>
             </TabPanel>
             <TabPanel value={value} index={5}>
-              <Typography variant="overline">Social Accounts</Typography>
-              <Stack direction="column">
-                <TextField
-                  id="facebookLink"
-                  label="Facebook"
-                  name="facebookLink"
-                  size="small"
-                  placeholder="Enter facebook profile link"
-                  value={socialMediaHandles.facebook}
-                  sx={{ width: 300 }}
-                  onChange={(e) => {
-                    setValues({
-                      ...values,
-                      socialMediaHandles: {
-                        ...values.socialMediaHandles,
-                        facebook: e.target.value,
-                      },
-                    });
-                  }}
-                  {...(errors["facebookLink"] && {
-                    error: true,
-                    helperText: errors["facebookLink"],
-                  })}
-                />
-                <UILink href={socialMediaHandles.facebook} underline="always">
-                  {socialMediaHandles.facebook}
-                </UILink>
-                <TextField
-                  id="twitterLink"
-                  label="Twitter"
-                  name="twitterLink"
-                  size="small"
-                  placeholder="Enter twitter profile link"
-                  value={socialMediaHandles.twitter}
-                  sx={{ width: 300 }}
-                  onChange={(e) => {
-                    setValues({
-                      ...values,
-                      socialMediaHandles: {
-                        ...values.socialMediaHandles,
-                        twitter: e.target.value,
-                      },
-                    });
-                  }}
-                  {...(errors["twitterLink"] && {
-                    error: true,
-                    helperText: errors["twitterLink"],
-                  })}
-                />
-                <TextField
-                  id="linkedInLink"
-                  label="LinkedIn"
-                  name="linkedInLink"
-                  size="small"
-                  placeholder="Enter linkedIn profile link"
-                  value={socialMediaHandles.linkedin}
-                  sx={{ width: 300 }}
-                  onChange={(e) => {
-                    setValues({
-                      ...values,
-                      socialMediaHandles: {
-                        ...values.socialMediaHandles,
-                        linkedin: e.target.value,
-                      },
-                    });
-                  }}
-                  {...(errors["linkedInLink"] && {
-                    error: true,
-                    helperText: errors["linkedInLink"],
-                  })}
-                />
-                <TextField
-                  id="instagramLink"
-                  label="Instagram"
-                  name="instagramLink"
-                  size="small"
-                  placeholder="Enter facebook profile link"
-                  value={socialMediaHandles.instagram}
-                  sx={{ width: 300 }}
-                  onChange={(e) => {
-                    setValues({
-                      ...values,
-                      socialMediaHandles: {
-                        ...values.socialMediaHandles,
-                        instagram: e.target.value,
-                      },
-                    });
-                  }}
-                  {...(errors["instagramLink"] && {
-                    error: true,
-                    helperText: errors["instagramLink"],
-                  })}
-                />
+              <Stack direction="column" spacing={1}>
+                <Typography variant="overline">Social Accounts</Typography>
+                <Stack
+                  spacing={1}
+                  direction="row"
+                  sx={{ alignItems: "center" }}
+                >
+                  <TextField
+                    id="facebookLink"
+                    label="Facebook"
+                    name="facebookLink"
+                    size="small"
+                    placeholder="Enter facebook profile link"
+                    value={socialMediaHandles.facebook}
+                    sx={{ width: "40ch" }}
+                    onChange={(e) => {
+                      setValues({
+                        ...values,
+                        socialMediaHandles: {
+                          ...values.socialMediaHandles,
+                          facebook: e.target.value,
+                        },
+                      });
+                    }}
+                    {...(errors["facebookLink"] && {
+                      error: true,
+                      helperText: errors["facebookLink"],
+                    })}
+                  />
+                  <UILink href={socialMediaHandles.facebook} underline="always">
+                    {socialMediaHandles.facebook}
+                  </UILink>
+                </Stack>
+                <Stack
+                  spacing={1}
+                  direction="row"
+                  sx={{ alignItems: "center" }}
+                >
+                  <TextField
+                    id="twitterLink"
+                    label="Twitter"
+                    name="twitterLink"
+                    size="small"
+                    placeholder="Enter twitter profile link"
+                    value={socialMediaHandles.twitter}
+                    sx={{ width: "40ch" }}
+                    onChange={(e) => {
+                      setValues({
+                        ...values,
+                        socialMediaHandles: {
+                          ...values.socialMediaHandles,
+                          twitter: e.target.value,
+                        },
+                      });
+                    }}
+                    {...(errors["twitterLink"] && {
+                      error: true,
+                      helperText: errors["twitterLink"],
+                    })}
+                  />
+                  <UILink href={socialMediaHandles.twitter} underline="always">
+                    {socialMediaHandles.twitter}
+                  </UILink>
+                </Stack>
+                <Stack
+                  spacing={1}
+                  direction="row"
+                  sx={{ alignItems: "center" }}
+                >
+                  <TextField
+                    id="linkedInLink"
+                    label="LinkedIn"
+                    name="linkedInLink"
+                    size="small"
+                    placeholder="Enter linkedIn profile link"
+                    value={socialMediaHandles.linkedin}
+                    sx={{ width: "40ch" }}
+                    onChange={(e) => {
+                      setValues({
+                        ...values,
+                        socialMediaHandles: {
+                          ...values.socialMediaHandles,
+                          linkedin: e.target.value,
+                        },
+                      });
+                    }}
+                    {...(errors["linkedInLink"] && {
+                      error: true,
+                      helperText: errors["linkedInLink"],
+                    })}
+                  />
+                  <UILink href={socialMediaHandles.linkedin} underline="always">
+                    {socialMediaHandles.linkedin}
+                  </UILink>
+                </Stack>
+                <Stack
+                  spacing={1}
+                  direction="row"
+                  sx={{ alignItems: "center" }}
+                >
+                  <TextField
+                    id="instagramLink"
+                    label="Instagram"
+                    name="instagramLink"
+                    size="small"
+                    placeholder="Enter facebook profile link"
+                    value={socialMediaHandles.instagram}
+                    sx={{ width: "40ch" }}
+                    onChange={(e) => {
+                      setValues({
+                        ...values,
+                        socialMediaHandles: {
+                          ...values.socialMediaHandles,
+                          instagram: e.target.value,
+                        },
+                      });
+                    }}
+                    {...(errors["instagramLink"] && {
+                      error: true,
+                      helperText: errors["instagramLink"],
+                    })}
+                  />
+                  <UILink
+                    href={socialMediaHandles.instagram}
+                    underline="always"
+                  >
+                    {socialMediaHandles.instagram}
+                  </UILink>
+                </Stack>
               </Stack>
             </TabPanel>
           </Box>

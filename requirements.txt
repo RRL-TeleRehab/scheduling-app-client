@@ -1,3 +1,2 @@
-1) Add confirmed appointments slot time in the availability page - done
-2) Do not replicate the appointment request for the same patient at the same time with the same clinician.
-3) After cancelling the appointment make the appointment time slot to available if valid
+1) Do not replicate the appointment request for the same patient at the same time with the same clinician.
+2) write a cron job to make the active appointments to completed at the end of the day.
