@@ -17,20 +17,15 @@ import {
   Box,
   Radio,
   CircularProgress,
-  Avatar,
-  Chip,
 } from "@mui/material";
-
+import ClinicianBio from "./ClinicianBio";
+import ClinicBio from "./ClinicBio";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import MapsMarker from "./MapsMarker";
-import facebookSvg from "../../media/facebook.svg";
-import twitterSvg from "../../media/twitter.svg";
-import linkedinSvg from "../../media/linkedin.svg";
-import instagramSvg from "../../media/instagram.svg";
 
 const AppointmentBooking = ({ match, history }) => {
   const [values, setValues] = useState({
@@ -350,333 +345,28 @@ const AppointmentBooking = ({ match, history }) => {
               <CircularProgress></CircularProgress>
             ) : (
               <Fragment>
-                <Box sx={{ backgroundColor: "#FFFFFF" }}>
-                  <Stack
-                    direction="row"
-                    justifyContent="center"
-                    sx={{ backgroundColor: "#1976d2" }}
-                  >
-                    <ListSubheader sx={{ backgroundColor: "#1976d2" }}>
-                      <Typography
-                        variant="h6"
-                        color="text.primary"
-                        sx={{ color: "#FFFFFF" }}
-                      >
-                        {title}.{firstName.toUpperCase()}
-                        {lastName.toUpperCase()} ({gender})
-                      </Typography>
-                    </ListSubheader>
-                  </Stack>
-                  <Grid container>
-                    <Grid item xs={6}>
-                      <Stack
-                        direction="column"
-                        alignItems="center"
-                        sx={{ p: 1 }}
-                      >
-                        {profilePhoto && (
-                          <Avatar
-                            src={profilePhoto}
-                            alt="no-image"
-                            sx={{
-                              height: 100,
-                              width: 100,
-                              border: "2px solid #1976d2",
-                            }}
-                          />
-                        )}
-                        <List
-                          dense
-                          sx={{
-                            width: "100%",
-                            maxWidth: 360,
-                            bgcolor: "background.paper",
-                            border: "1px solid #1976d2",
-                            borderRadius: "5px",
-                            mt: 1,
-                          }}
-                          component="nav"
-                          aria-label="mailbox folders"
-                        >
-                          <ListItem button divider>
-                            <ListItemText
-                              primary={
-                                <Typography
-                                  variant="overline"
-                                  color="text.primary"
-                                >{`${email}`}</Typography>
-                              }
-                            />
-                          </ListItem>
-                          <ListItem button divider>
-                            <ListItemText
-                              primary={
-                                <Typography
-                                  variant="overline"
-                                  color="text.primary"
-                                >{`Contact: ${clinicContact}`}</Typography>
-                              }
-                            />
-                          </ListItem>
-                          <ListItem
-                            divider
-                            button
-                            secondaryAction={
-                              <Typography>{yearsOfExperience}</Typography>
-                            }
-                          >
-                            <ListItemText
-                              primary={
-                                <Typography variant="overline">
-                                  Years of Experience:
-                                </Typography>
-                              }
-                            />
-                          </ListItem>
-                          <ListItem
-                            button
-                            divider
-                            secondaryAction={
-                              <Typography>{affiliatedFrom}</Typography>
-                            }
-                          >
-                            <ListItemText
-                              primary={
-                                <Typography variant="overline">
-                                  Affiliation:
-                                </Typography>
-                              }
-                            />
-                          </ListItem>
-                          <ListItem
-                            button
-                            secondaryAction={
-                              <Typography>
-                                {clinicianTrainedLocation}
-                              </Typography>
-                            }
-                          >
-                            <ListItemText
-                              primary={
-                                <Typography variant="overline">
-                                  Trained Location:
-                                </Typography>
-                              }
-                            />
-                          </ListItem>
-                        </List>
-                      </Stack>
-                      <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        sx={{ p: 1 }}
-                      >
-                        <Button
-                          onClick={() =>
-                            openInNewTab(`${socialMediaHandles.facebook}`)
-                          }
-                          variant="outlined"
-                        >
-                          <img width={30} height={30} src={facebookSvg}></img>
-                        </Button>
-                        <Button
-                          onClick={() =>
-                            openInNewTab(`${socialMediaHandles.instagram}`)
-                          }
-                          variant="outlined"
-                        >
-                          <img width={30} height={30} src={instagramSvg}></img>{" "}
-                        </Button>
-                        <Button
-                          onClick={() =>
-                            openInNewTab(`${socialMediaHandles.linkedin}`)
-                          }
-                          variant="outlined"
-                        >
-                          <img width={30} height={30} src={linkedinSvg}></img>
-                        </Button>
-                        <Button
-                          size="small"
-                          onClick={() =>
-                            openInNewTab(`${socialMediaHandles.twitter}`)
-                          }
-                          variant="outlined"
-                        >
-                          <img width={30} height={30} src={twitterSvg}></img>
-                        </Button>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Stack
-                        direction="column"
-                        alignItems="center"
-                        sx={{ p: 1 }}
-                      >
-                        <Box
-                          sx={{
-                            textAlign: "justify",
-                            p: 1,
-                            boxShadow: 5,
-                            minHeight: 240,
-                          }}
-                        >
-                          {aboutClinician}
-                        </Box>
-                        <Box sx={{ mt: 1 }}>
-                          <Typography
-                            variant="overline"
-                            sx={{ fontWeight: 600 }}
-                          >
-                            specialization
-                          </Typography>
-                          {clinicianSpecialization.length > 0 ? (
-                            clinicianSpecialization.map(
-                              (specialization, key) => (
-                                <Chip
-                                  sx={{ m: 0.25 }}
-                                  key={specialization}
-                                  label={specialization}
-                                ></Chip>
-                              )
-                            )
-                          ) : (
-                            <Typography
-                              variant="caption"
-                              display="block"
-                              gutterBottom
-                            >
-                              No specialization mentioned by clinician.
-                            </Typography>
-                          )}
-                          <Typography
-                            variant="overline"
-                            sx={{ fontWeight: 600 }}
-                          >
-                            Professional Courses
-                          </Typography>
-                          {clinicianProfessionalCourses.length > 0 ? (
-                            clinicianProfessionalCourses.map((course, key) => (
-                              <Chip
-                                sx={{ m: 0.25 }}
-                                key={course}
-                                label={course}
-                              ></Chip>
-                            ))
-                          ) : (
-                            <Typography
-                              variant="caption"
-                              display="block"
-                              gutterBottom
-                            >
-                              No courses mentioned by clinician.
-                            </Typography>
-                          )}
-                        </Box>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </Box>
-                <Box sx={{ mt: 1, bgcolor: "background.paper" }}>
-                  <Stack direction="row" justifyContent="center">
-                    <ListSubheader>
-                      <Typography variant="overline">
-                        CLINIC INFORMATION
-                      </Typography>
-                    </ListSubheader>
-                  </Stack>
-                  <Grid container>
-                    <Grid item xs={6}>
-                      <Stack
-                        sx={{ p: 1 }}
-                        direction="column"
-                        alignItems="center"
-                      >
-                        <List
-                          dense
-                          sx={{
-                            width: "100%",
-                            maxWidth: 360,
-                            bgcolor: "background.paper",
-                            border: "1px solid #1976d2",
-                            borderRadius: "5px",
-                          }}
-                          component="nav"
-                          aria-label="mailbox folders"
-                        >
-                          <ListItem
-                            divider
-                            button
-                            secondaryAction={
-                              <Typography>{clinicName}</Typography>
-                            }
-                          >
-                            <ListItemText
-                              primary={
-                                <Typography variant="overline">
-                                  Clinic Name:
-                                </Typography>
-                              }
-                            />
-                          </ListItem>
-                          <ListItem
-                            button
-                            divider
-                            secondaryAction={
-                              <Typography>{clinicRegisteredYear}</Typography>
-                            }
-                          >
-                            <ListItemText
-                              primary={
-                                <Typography variant="overline">
-                                  Registered Year:
-                                </Typography>
-                              }
-                            />
-                          </ListItem>
-                          <ListItem
-                            button
-                            secondaryAction={
-                              <Typography>{clinicRegistrationNo}</Typography>
-                            }
-                          >
-                            <ListItemText
-                              primary={
-                                <Typography variant="overline">
-                                  registration No:
-                                </Typography>
-                              }
-                            />
-                          </ListItem>
-                        </List>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Stack sx={{ p: 1 }}>
-                        <Box
-                          sx={{
-                            p: 1,
-                            border: "1px solid #1976d2",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          <ListSubheader>
-                            <Typography variant="overline">
-                              Clinic Address
-                            </Typography>
-                          </ListSubheader>
-                          <Typography>{clinicAddress.address1}</Typography>
-                          <Typography>{clinicAddress.address2}</Typography>
-                          <Typography>{clinicAddress.city}</Typography>
-                          <Typography>
-                            {clinicAddress.province} {clinicAddress.postalCode}
-                          </Typography>
-                          <Typography>{clinicAddress.country}</Typography>
-                        </Box>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </Box>
+                <ClinicianBio
+                  title={title}
+                  firstName={firstName}
+                  lastName={lastName}
+                  email={email}
+                  gender={gender}
+                  profilePhoto={profilePhoto}
+                  clinicContact={clinicContact}
+                  yearsOfExperience={yearsOfExperience}
+                  affiliatedFrom={affiliatedFrom}
+                  clinicianTrainedLocation={clinicianTrainedLocation}
+                  clinicianProfessionalCourses={clinicianProfessionalCourses}
+                  socialMediaHandles={socialMediaHandles}
+                  aboutClinician={aboutClinician}
+                  clinicianSpecialization={clinicianSpecialization}
+                ></ClinicianBio>
+                <ClinicBio
+                  clinicName={clinicName}
+                  clinicAddress={clinicAddress}
+                  clinicRegisteredYear={clinicRegisteredYear}
+                  clinicRegistrationNo={clinicRegistrationNo}
+                ></ClinicBio>
               </Fragment>
             )}
           </Grid>
@@ -702,7 +392,7 @@ const AppointmentBooking = ({ match, history }) => {
               <List
                 subheader={
                   <ListSubheader>
-                    <Typography variant="overline">Select Time Slot</Typography>
+                    <Typography variant="overline">Time Slot</Typography>
                   </ListSubheader>
                 }
                 sx={{
@@ -714,24 +404,25 @@ const AppointmentBooking = ({ match, history }) => {
               >
                 {availableTimeSlots.length === 0 ? (
                   <ListItem>
-                    <ListItemButton>
-                      <ListItemText>
-                        No slots available. Please change date
-                      </ListItemText>
-                    </ListItemButton>
+                    <ListItemText>
+                      No slots available for today. Select different date
+                    </ListItemText>
                   </ListItem>
                 ) : (
                   availableTimeSlots.map((value) => {
                     const labelId = `checkbox-list-label-${value}`;
                     return (
                       <ListItem key={value} disablePadding>
-                        <ListItemButton sx={{ px: 3 }} role={undefined} dense>
-                          <ListItemText
-                            sx={{ px: 2 }}
-                            id={labelId}
-                            primary={`${value} [${tConv24(value)}]`}
-                          />
-                          <ListItemIcon sx={{ px: 2 }}>
+                        <ListItemButton
+                          dense
+                          sx={{
+                            border: "1px solid #1976d2",
+                            mx: 1,
+                            marginTop: 1,
+                            borderRadius: 1,
+                          }}
+                        >
+                          <ListItemIcon>
                             <Radio
                               edge="start"
                               tabIndex={-1}
@@ -742,6 +433,10 @@ const AppointmentBooking = ({ match, history }) => {
                               name="radio"
                             />
                           </ListItemIcon>
+                          <ListItemText
+                            id={labelId}
+                            primary={`${value} [${tConv24(value)}]`}
+                          />
                         </ListItemButton>
                       </ListItem>
                     );
@@ -755,7 +450,7 @@ const AppointmentBooking = ({ match, history }) => {
                 <Grid item xs={12}>
                   <ListSubheader>
                     <Typography variant="overline">
-                      Enter patient information
+                      patient information
                     </Typography>
                   </ListSubheader>
                   <TextField

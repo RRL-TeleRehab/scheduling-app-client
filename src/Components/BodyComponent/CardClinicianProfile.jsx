@@ -12,12 +12,10 @@ import {
   Box,
 } from "@mui/material";
 
-const MAX_LENGTH = 350;
-
 const cardStyle = {
   card: {
     maxWidth: 450,
-    mx: 1,
+    m: 1,
     border: "1px solid #1976d2",
     borderRadius: 1,
     "&:hover": {
@@ -31,8 +29,8 @@ const cardStyle = {
     color: "#ffffff",
   },
   cardAvatar: {
-    width: 110,
-    height: 110,
+    width: 120,
+    height: 120,
     border: "2px solid #1976d2",
   },
   cardContentChip: {
@@ -40,15 +38,21 @@ const cardStyle = {
   },
   bottomCardContent: {
     minHeight: 80,
+    p: 1,
   },
   clinicianDescription: {
     textAlign: "justify",
     p: 1,
     borderRadius: 1,
-    boxShadow: 5,
+    border: "1px solid #1976d2",
+    minHeight: 170,
+    maxHeight: 170,
+    minWidth: 230,
+    maxWidth: 230,
+    overflow: "auto",
   },
   cardLeftStack: {
-    my: 1,
+    my: 0.5,
   },
   clinicianInfo: {
     fontWeight: "bold",
@@ -87,12 +91,11 @@ const CardClinicianProfile = ({ clinician }) => {
                 />
               )}
               <Typography variant="overline" sx={cardStyle.clinicianInfo}>
-                CLINIC: {clinician.clinicName}
+                {clinician.clinicName}
               </Typography>
               <Typography variant="caption" sx={cardStyle.clinicianInfo}>
-                Contact: {clinician.clinicContact}
+                {clinician.clinicContact}
               </Typography>
-
               <Typography variant="caption" sx={cardStyle.clinicianEmail}>
                 {clinician.email}
               </Typography>
@@ -106,7 +109,9 @@ const CardClinicianProfile = ({ clinician }) => {
               sx={cardStyle.cardRightStack}
             >
               <Box sx={cardStyle.clinicianDescription}>
-                {`${clinician.aboutClinician.substring(0, MAX_LENGTH)}...`}
+                {clinician.aboutClinician.length > 0
+                  ? clinician.aboutClinician
+                  : "No Information"}
               </Box>
             </Stack>
           </Grid>
@@ -123,7 +128,21 @@ const CardClinicianProfile = ({ clinician }) => {
             ))
           ) : (
             <Typography variant="caption" display="block" gutterBottom>
-              No specialization mentioned by clinician.
+              No specialization mentioned.
+            </Typography>
+          )}
+
+          {clinician.clinicianProfessionalCourses.length > 0 ? (
+            clinician.clinicianProfessionalCourses.map((course, key) => (
+              <Chip
+                sx={cardStyle.cardContentChip}
+                key={course}
+                label={course}
+              ></Chip>
+            ))
+          ) : (
+            <Typography variant="caption" display="block" gutterBottom>
+              No professional courses mentioned.
             </Typography>
           )}
         </CardContent>

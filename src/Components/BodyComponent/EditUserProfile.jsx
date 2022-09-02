@@ -58,11 +58,7 @@ function TabPanel(props) {
       aria-labelledby={`vertical-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -643,11 +639,7 @@ const UserEditProfile = ({ history }) => {
                 icon={<PersonIcon />}
                 {...a11yProps(0)}
               />
-              <Tab
-                icon={<KeyIcon />}
-                label="Change Password"
-                {...a11yProps(1)}
-              />
+              <Tab icon={<KeyIcon />} label="Password" {...a11yProps(1)} />
               <Tab
                 icon={<LocalHospitalIcon></LocalHospitalIcon>}
                 label="Clinic Information"
@@ -655,12 +647,12 @@ const UserEditProfile = ({ history }) => {
               />
               <Tab
                 icon={<SchoolIcon></SchoolIcon>}
-                label="Clinician Skills"
+                label="Skills"
                 {...a11yProps(3)}
               />
               <Tab
                 icon={<LocationOnIcon></LocationOnIcon>}
-                label="Clinic Address"
+                label="Address"
                 {...a11yProps(4)}
               />
               <Tab
@@ -672,14 +664,8 @@ const UserEditProfile = ({ history }) => {
             <TabPanel variant="scrollable" value={value} index={0}>
               <Grid
                 container
-                direction="row"
-                alignItems="center"
-                justify="center"
                 spacing={1}
                 sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
                   alignItems: "center",
                 }}
               >
@@ -710,7 +696,7 @@ const UserEditProfile = ({ history }) => {
                     <Avatar
                       alt={`${firstName} ${lastName}`}
                       src={profilePhoto}
-                      sx={{ width: 100, height: 100 }}
+                      sx={{ width: 150, height: 150 }}
                     ></Avatar>
                     <Button containerelement="label" size="small">
                       <input
@@ -720,7 +706,7 @@ const UserEditProfile = ({ history }) => {
                         ref={inputFile}
                       ></input>
                     </Button>
-                    <IconButton
+                    <Button
                       variant="contained"
                       color="primary"
                       size="small"
@@ -729,15 +715,15 @@ const UserEditProfile = ({ history }) => {
                       {profilePhotoUploading ? (
                         <CircularProgress color="inherit" size={20} />
                       ) : (
-                        <FileUploadIcon></FileUploadIcon>
+                        "upload"
                       )}
-                    </IconButton>
+                    </Button>
                   </Box>
                 </Grid>
 
                 <Grid item xs={6}>
-                  <Stack spacing={2} direction="row">
-                    <FormControl size="small">
+                  <Stack spacing={1} direction="row">
+                    <FormControl sx={{ width: "10ch" }} size="small">
                       <InputLabel id="demo-title">Title</InputLabel>
                       <Select
                         required
@@ -754,12 +740,11 @@ const UserEditProfile = ({ history }) => {
                         <MenuItem value={"Mrs"}>Mrs</MenuItem>
                         <MenuItem value={"Ms"}>Ms</MenuItem>
                         <MenuItem value={"Miss"}>Miss</MenuItem>
-                        <MenuItem value={"Mx"}>Mx</MenuItem>
-                        <MenuItem value={"Rev"}>Rev</MenuItem>
                         <MenuItem value={"Sir"}>Sir</MenuItem>
                       </Select>
                     </FormControl>
                     <TextField
+                      sx={{ width: "40ch" }}
                       required
                       autoComplete="given-name"
                       name="firstName"
@@ -776,6 +761,7 @@ const UserEditProfile = ({ history }) => {
                     />
                     <TextField
                       required
+                      sx={{ width: "40ch" }}
                       id="lastName"
                       label="Last Name"
                       name="lastName"
@@ -791,7 +777,7 @@ const UserEditProfile = ({ history }) => {
                     />
                   </Stack>
                   <Stack spacing={2} direction="row" sx={{ mt: 2 }}>
-                    <FormControl sx={{ minWidth: 80 }} size="small">
+                    <FormControl sx={{ width: "20ch" }} size="small">
                       <InputLabel id="demo-experience">Experience</InputLabel>
                       <Select
                         labelId="demo-experience"
@@ -808,7 +794,7 @@ const UserEditProfile = ({ history }) => {
                         ))}
                       </Select>
                     </FormControl>
-                    <FormControl sx={{ minWidth: 80 }} size="small">
+                    <FormControl sx={{ width: "20ch" }} size="small">
                       <InputLabel id="demo-gender">Gender</InputLabel>
                       <Select
                         labelId="demo-gender"
@@ -823,6 +809,7 @@ const UserEditProfile = ({ history }) => {
                       </Select>
                     </FormControl>
                     <TextField
+                      sx={{ width: "40ch" }}
                       disabled
                       id="email"
                       label="Email Address"
@@ -852,7 +839,7 @@ const UserEditProfile = ({ history }) => {
                       size="small"
                       placeholder="Enter clinic trained location"
                       value={clinicianTrainedLocation}
-                      sx={{ width: 300 }}
+                      sx={{ width: "40ch" }}
                       onChange={handleChange("clinicianTrainedLocation")}
                       {...(errors["clinicianTrainedLocation"] && {
                         error: true,
@@ -861,50 +848,48 @@ const UserEditProfile = ({ history }) => {
                     />
                   </Stack>
                   {role === "hub" && (
-                    <Stack spacing={2} direction="row" sx={{ mt: 2 }}>
-                      <TextField
-                        required
-                        fullWidth
-                        id="meetingLink"
-                        label="Meeting Link"
-                        name="meetingLink"
-                        autoComplete="meetingLink"
-                        placeholder="Enter your personal meeting link"
-                        size="small"
-                        value={meetingLink}
-                        onChange={handleChange("meetingLink")}
-                        {...(errors["meetingLink"] && {
-                          error: true,
-                          helperText: errors["meetingLink"],
-                        })}
-                      />
-                    </Stack>
+                    <TextField
+                      required
+                      fullWidth
+                      sx={{ mt: 2 }}
+                      id="meetingLink"
+                      label="Meeting Link"
+                      name="meetingLink"
+                      autoComplete="meetingLink"
+                      placeholder="Enter your personal meeting link"
+                      size="small"
+                      value={meetingLink}
+                      onChange={handleChange("meetingLink")}
+                      {...(errors["meetingLink"] && {
+                        error: true,
+                        helperText: errors["meetingLink"],
+                      })}
+                    />
                   )}
                 </Grid>
                 <Grid item xs={6}>
-                  <Stack direction="column" spacing={2}>
-                    <TextField
-                      id="aboutClinician"
-                      label="About yourself"
-                      name="aboutClinician"
-                      placeholder="Add something about yourself..."
-                      size="small"
-                      multiline
-                      rows={10}
-                      value={aboutClinician}
-                      onChange={handleChange("aboutClinician")}
-                      helperText={`${aboutClinician.length}/${ABOUT_CLINICIAN_CHAR_LIMIT}`}
-                      {...(errors["aboutClinician"] && {
-                        error: true,
-                        helperText: errors["aboutClinician"],
-                      })}
-                    />
-                  </Stack>
+                  <TextField
+                    fullWidth
+                    id="aboutClinician"
+                    label="About yourself"
+                    name="aboutClinician"
+                    placeholder="Add something about yourself..."
+                    size="small"
+                    multiline
+                    rows={10}
+                    value={aboutClinician}
+                    onChange={handleChange("aboutClinician")}
+                    helperText={`${aboutClinician.length}/${ABOUT_CLINICIAN_CHAR_LIMIT}`}
+                    {...(errors["aboutClinician"] && {
+                      error: true,
+                      helperText: errors["aboutClinician"],
+                    })}
+                  />
                 </Grid>
               </Grid>
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <Stack direction="column" spacing={1}>
+              <Stack direction="column" spacing={2}>
                 <Typography variant="overline">Update Password</Typography>
                 <TextField
                   required
@@ -979,7 +964,7 @@ const UserEditProfile = ({ history }) => {
               </Stack>
             </TabPanel>
             <TabPanel value={value} index={2}>
-              <Stack spacing={1} direction="column">
+              <Stack spacing={2} direction="column">
                 <Typography variant="overline">Clinic Information</Typography>
                 <TextField
                   required
@@ -1062,7 +1047,7 @@ const UserEditProfile = ({ history }) => {
               </Stack>
             </TabPanel>
             <TabPanel value={value} index={3}>
-              <Stack spacing={1} direction="column">
+              <Stack spacing={2} direction="column">
                 <Typography variant="overline">Clinician Skills</Typography>
                 <Stack
                   direction="row"
@@ -1076,7 +1061,7 @@ const UserEditProfile = ({ history }) => {
                     size="small"
                     placeholder="Enter course name"
                     value={newCourse}
-                    sx={{ width: 300 }}
+                    sx={{ width: "40ch" }}
                     onChange={handleChange("newCourse")}
                     onKeyDown={handleAddNewCourse(newCourse)}
                     {...(errors["newCourse"] && {
@@ -1108,7 +1093,7 @@ const UserEditProfile = ({ history }) => {
                     size="small"
                     placeholder="Add new specialization"
                     value={newSpecialty}
-                    sx={{ width: 300 }}
+                    sx={{ width: "40ch" }}
                     onChange={handleChange("newSpecialty")}
                     onKeyDown={handleAddNewSpecialty(newSpecialty)}
                     {...(errors["newSpecialty"] && {
@@ -1131,12 +1116,12 @@ const UserEditProfile = ({ history }) => {
               </Stack>
             </TabPanel>
             <TabPanel value={value} index={4}>
-              <Stack direction="column" spacing={1}>
+              <Stack direction="column" spacing={2}>
                 <Typography variant="overline">Clinic Address</Typography>
                 <TextField
                   sx={{ width: "40ch" }}
                   id="address1"
-                  label="address1"
+                  label="Address 1"
                   name="address1"
                   placeholder="Enter Address"
                   size="small"
@@ -1158,7 +1143,7 @@ const UserEditProfile = ({ history }) => {
                 <TextField
                   sx={{ width: "40ch" }}
                   id="address2"
-                  label="address2"
+                  label="Address 2"
                   name="address2"
                   placeholder="Enter Address"
                   size="small"
@@ -1180,7 +1165,7 @@ const UserEditProfile = ({ history }) => {
                 <TextField
                   sx={{ width: "40ch" }}
                   id="city"
-                  label="city"
+                  label="City"
                   name="city"
                   placeholder="Enter city"
                   size="small"
@@ -1275,7 +1260,7 @@ const UserEditProfile = ({ history }) => {
               </Stack>
             </TabPanel>
             <TabPanel value={value} index={5}>
-              <Stack direction="column" spacing={1}>
+              <Stack direction="column" spacing={2}>
                 <Typography variant="overline">Social Accounts</Typography>
                 <Stack
                   spacing={1}

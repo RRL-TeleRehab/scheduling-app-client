@@ -311,7 +311,7 @@ export default function Availability() {
                 }
                 sx={{
                   border: "1px solid #000",
-                  marginTop: 1,
+                  mt: 1,
                   borderRadius: 1,
                 }}
                 style={{

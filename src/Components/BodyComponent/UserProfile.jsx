@@ -2,14 +2,28 @@ import React, { useState, useEffect, Fragment } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
-import { isAuth, getCookie, signout } from "../../Common/helpers";
-import Box from "@mui/material/Box";
+import {
+  isAuth,
+  getCookie,
+  signout,
+  convertToDate,
+} from "../../Common/helpers";
 import NavBreadCrumb from "./NavBreadCrumb";
-import Grid from "@mui/material/Grid";
+import {
+  Stack,
+  Grid,
+  Box,
+  Typography,
+  CircularProgress,
+  ListSubheader,
+  Button,
+} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import CircularProgress from "@mui/material/CircularProgress";
 import EditIcon from "@mui/icons-material/Edit";
 import { Link } from "react-router-dom";
+import ClinicianBio from "./ClinicianBio";
+import ClinicBio from "./ClinicBio";
+import MapsMarker from "./MapsMarker";
 
 const UserProfile = ({ history }) => {
   const [values, setValues] = useState({
@@ -160,61 +174,65 @@ const UserProfile = ({ history }) => {
     <Fragment>
       <ToastContainer></ToastContainer>
       <NavBreadCrumb path="/profile" name="/Profile"></NavBreadCrumb>
-      {loading ? (
-        <CircularProgress></CircularProgress>
-      ) : (
-        <Box mt={2} sx={{ flexGrow: 1 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6} lg={8}>
-              <div>
-                {firstName}
-                {lastName}
-                {title}
-              </div>
-              <img
-                alt={process.env.REACT_APP_DEFAULT_USER_PROFILE_AVATAR}
-                src={profilePhoto}
-                style={{ width: "100px", height: "100px" }}
-              ></img>
-              <div>Experience: {yearsOfExperience}</div>
-              <div>clinicName: {clinicName}</div>
-              <div>{email}</div>
-              <div>{aboutClinician}</div>
-              <div>{dateOfBirth}</div>
-              <div>
-                {clinicAddress.address1}
-                {clinicAddress.address2}
-                {clinicAddress.city}
-                {clinicAddress.postCode}
-                {clinicAddress.province}
-                {clinicAddress.country}
-              </div>
-              <div>{gender}</div>
-              <div> {affiliatedFrom}</div>
-              <div> {clinicContact}</div>
-              <div> {clinicRegistrationNo}</div>
-              <div> {clinicianProfessionalCourses}</div>
-              <div> {clinicName}</div>
-              <div> {clinicianSpecialization}</div>
-              <div> {clinicianTrainedLocation}</div>
-              <div> Account created on{createdAt}</div>
-              <div> Account Last updated on {updatedAt}</div>
-              <div>{socialMediaHandles.facebook}</div>
-              <div>{socialMediaHandles.twitter}</div>
-              <div>{socialMediaHandles.linkedin}</div>
-              <div>{socialMediaHandles.instagram}</div>
-              <div>userId : {_id}</div>
-              <div>Roke : {role}</div>
-              <div>Registered Year : {clinicRegisteredYear}</div>
-              <div>username : {username}</div>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}></Grid>
-            <IconButton component={Link} to="/edit-profile">
-              <EditIcon></EditIcon>
-            </IconButton>
+      <Stack direction="row" sx={{ mt: 1 }}>
+        <Grid container spacing={1}>
+          <Grid item xs={6}>
+            {loading ? (
+              <CircularProgress></CircularProgress>
+            ) : (
+              <Fragment>
+                <ClinicianBio
+                  title={title}
+                  firstName={firstName}
+                  lastName={lastName}
+                  email={email}
+                  gender={gender}
+                  profilePhoto={profilePhoto}
+                  clinicContact={clinicContact}
+                  yearsOfExperience={yearsOfExperience}
+                  affiliatedFrom={affiliatedFrom}
+                  clinicianTrainedLocation={clinicianTrainedLocation}
+                  clinicianProfessionalCourses={clinicianProfessionalCourses}
+                  socialMediaHandles={socialMediaHandles}
+                  aboutClinician={aboutClinician}
+                  clinicianSpecialization={clinicianSpecialization}
+                ></ClinicianBio>
+                <ClinicBio
+                  clinicName={clinicName}
+                  clinicAddress={clinicAddress}
+                  clinicRegisteredYear={clinicRegisteredYear}
+                  clinicRegistrationNo={clinicRegistrationNo}
+                ></ClinicBio>
+              </Fragment>
+            )}
           </Grid>
-        </Box>
-      )}
+          <Grid item xs={6}>
+            <Button component={Link} variant="contained" to="/edit-profile">
+              Edit
+            </Button>
+            <Box
+              sx={{
+                my: 2,
+                flexDirection: "column",
+                bgcolor: "background.paper",
+              }}
+            >
+              <Stack direction="row" justifyContent="center">
+                <ListSubheader>
+                  <Typography variant="overline">User Information</Typography>
+                </ListSubheader>
+              </Stack>
+              <Typography>User ID: {_id}</Typography>
+              <Typography>Role: {role}</Typography>
+              <Typography>Username: {username}</Typography>
+              <Typography>DOB: {convertToDate(dateOfBirth)}</Typography>
+              <Typography>Created on: {convertToDate(createdAt)}</Typography>
+              <Typography>Updated on: {convertToDate(updatedAt)}</Typography>
+            </Box>
+            <MapsMarker></MapsMarker>
+          </Grid>
+        </Grid>
+      </Stack>
     </Fragment>
   );
 };
